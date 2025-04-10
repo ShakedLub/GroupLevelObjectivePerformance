@@ -8,6 +8,9 @@ library(stringr)
 library(dplyr)
 library(gridExtra)
 library(svglite)
+library(RColorBrewer)
+library(scales)
+library(gridExtra)
 
 ## clear workspace
 rm(list=ls())
