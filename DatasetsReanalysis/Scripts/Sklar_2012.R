@@ -12,7 +12,11 @@ chance=0.5
 alpha=0.05
 
 #read the data set
+<<<<<<< Updated upstream
 raw_data <- read_excel("./Datasets/Sklar/Exp6.xlsx")
+=======
+raw_data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/Sklar/Exp6.xlsx")
+>>>>>>> Stashed changes
 
 colnames(raw_data)[which(names(raw_data)=="Unaware?")]="Unaware"
 
@@ -97,7 +101,11 @@ rm(list=setdiff(ls(),c("data_6","data_per_subj_6","chance","alpha")))
 numTrials=64
 
 #read the data set
+<<<<<<< Updated upstream
 raw_data <- read_excel("./Datasets/Sklar/Exp7.xlsx")
+=======
+raw_data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/Sklar/Exp7.xlsx")
+>>>>>>> Stashed changes
 
 colnames(raw_data)[which(names(raw_data)=="Unaware?")]="Unaware"
 
@@ -182,7 +190,11 @@ rm(list=setdiff(ls(),c("data_6","data_per_subj_6","data_7","data_per_subj_7","ch
 numTrials=48
 
 #read the data set
+<<<<<<< Updated upstream
 raw_data <- read.csv("./Datasets/Sklar/Exp9.csv")
+=======
+raw_data <- read.csv("./DatasetsReanalysis/PapersAndDownloadedData/Sklar/Exp9.csv")
+>>>>>>> Stashed changes
 
 #SR
 colnames(raw_data)[which(names(raw_data)=="objectiv")]="SR"
@@ -284,4 +296,4 @@ data_per_subj_all=rbind(data_per_subj_6,data_per_subj_7,data_per_subj_9)
 
 #save the data
 processed_data <- list(trial_by_trial = data_all, summary_tables = data_per_subj_all)
-save(processed_data, file = "./Data/S_2012.RData")
+save(processed_data, file = "./DatasetsReanalysis/Data/S_2012.RData")

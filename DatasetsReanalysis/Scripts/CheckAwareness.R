@@ -1,134 +1,85 @@
-CheckAwareness<-function(data_per_subj,data,data_per_subj_full,numExcObjTest,ThresholdObjTest,alpha,param,DatasetName,i_row,results){
+GetTestResult <- function(results, test_name, test_f, sig_test_f, data, trials, fixed_params, i_row) {
+  res <-test_f(data, trials, fixed_params@chance_as)
+  results[i_row,paste0("h_",test_name)]= sig_test_f(res, fixed_params)$H1
+  res_type_lbl <- ifelse(identical(sig_test_f, calc_sig_bayes), 'bf_', 'Pval_')
+  results[i_row,paste0(res_type_lbl,test_name)]= res
+  return(results)  
+}
+
+CheckAwareness<-function(data_per_subj,data,data_per_subj_full,numExcObjTest,ThresholdObjTest,alpha,param,DatasetName,i_row, results){
   PlotFlag=1
-  
+
   results[i_row,"dataset"]=DatasetName
   results[i_row,"paper"]=data_per_subj$paper[1]
-  
   ####################### Tests: #######################
   ####################### Ttest
-  t_test_data<-t.test(x=data_per_subj$AS,alternative = "greater",mu=param$ChanceSuccessRate)
-  results[i_row,"h_t_test"]=t_test_data$p.value<param$alpha
-  results[i_row,"Pval_t_test"]=t_test_data$p.value
-  
+  results <- GetTestResult(results, 't_test', t_f, calc_sig_freq, data_per_subj$AS, data_per_subj$ntrials, fixed_params, i_row)
   ####################### TBayes
   if (param$incSubjObjTest==1) {
-    bf=ttestBF(x=data_per_subj$AS,mu=param$ChanceSuccessRate)
-    results[i_row,"h_tBayes_test"]=exp(bf@bayesFactor$bf)>param$bfThreshold
-    results[i_row,"bf_tBayes_test"]=exp(bf@bayesFactor$bf)
-  }
-  
-  ####################### GB
-  if (param$incSubjObjTest==1) {
-    V=param$ChanceSuccessRate*(1-param$ChanceSuccessRate)/data_per_subj$ntrials
-    V=mean(V)
-    
-    zresult=z.test(x=data_per_subj$AS,alternative = "greater",mu=param$ChanceSuccessRate,sigma.x=sqrt(V))
-    results[i_row,"h_GB_test"]=zresult$p.value<param$alpha
-    results[i_row,"Pval_GB_test"]=zresult$p.value
-  }
-  
-  ####################### Chi
-  if (param$incSubjObjTest==1) {
-    # Number of successes per participant
-    r=data_per_subj$AS*data_per_subj$ntrials
-    
-    # Number of "failures" per participant
-    fa = data_per_subj$ntrials - r
-    
-    # Expected number of success = expected number of failures = n / 2
-    ex = data_per_subj$ntrials / 2
-    
-    # Compute observed chi-squared X2 = sum((S - E)^2 / E) + sum((F - E)^2/E)
-    X2 = sum((r - ex)^2 / ex) + sum((fa - ex)^2 / ex)
-    
-    # Under H0, X2 ~ chisq(k)
-    # Compute p-value
-    pval = 1 - pchisq(X2, df = dim(data_per_subj)[1])
-    results[i_row,"h_Chi_test"]=pval<param$alpha
-    results[i_row,"Pval_Chi_test"]=pval
-  }
-  
-  ####################### GBC
-  if (param$incSubjObjTest==1) {
-    results[i_row,"Pval_GBC_test"]=min(results[i_row,"Pval_Chi_test"],results[i_row,"Pval_GB_test"])
-    results[i_row,"h_GBC_test"]=ifelse(results[i_row,"Pval_Chi_test"]<(param$alpha/2) | results[i_row,"Pval_GB_test"]<(param$alpha/2),TRUE,FALSE)
-  }
-  
-  ####################### GBBayes
-  if (param$incSubjObjTest==1) {
-    r=data_per_subj$AS*data_per_subj$ntrials
-    if (any(r-round(r) > 0.0001)){
+    results <- GetTestResult(results, 'tBayes_test', tbayes_f, calc_sig_bayes, data_per_subj$AS, data_per_subj$ntrials, fixed_params, i_row)
+    ####################### GB
+    results <- GetTestResult(results, 'GB_test', gb_f, calc_sig_freq, data_per_subj$AS, data_per_subj$ntrials, fixed_params, i_row)
+    ####################### Chi
+    results <- GetTestResult(results, 'Chi_test', chisq_f, calc_sig_freq, matrix(data_per_subj$A), data_per_subj$ntrials, fixed_params, i_row)
+    ####################### GBC
+    results <- GetTestResult(results, 'GBC_test', gbc_f, calc_sig_freq, data_per_subj$AS, data_per_subj$ntrials, fixed_params, i_row)
+    ####################### GBBayes
+    roudned_A=data_per_subj$AS*data_per_subj$ntrials
+    if (any(roudned_A-round(roudned_A) > 0.0001)){
       print(paste("In ",DatasetName," the number of correct trials is not an integer"))
-      print (r-round(r))
+      print (roudned_A-round(roudned_A))
       
-      r=round(r)
+      roudned_A=round(roudned_A)
     }
-    listGBF=generate_GA_BF(r, data_per_subj$ntrials)
-    results[i_row,"bf_GBBayes_test"]=listGBF$BF #BF_10
-    results[i_row,"h_GBBayes_test"]=listGBF$BF>param$bfThreshold
+    results <- GetTestResult(results, 'GBBayes_test', gbf_f, calc_sig_bayes, as.vector(data_per_subj$A), as.vector(data_per_subj$ntrials), fixed_params, i_row)
   }
-  
-  ####################### RC test
   if (param$incSubjObjTest==0) {
-    pvalue = ResamplingCriterionTest(data_per_subj$AS,data_per_subj$ntrials,data_per_subj_full,ThresholdObjTest,alpha,param,"RC")
+    ####################### RC test
+    pvalue = resampling_criterion_test_f(data_per_subj$AS,data_per_subj_full,ThresholdObjTest,alpha,param,"RC")
     results[i_row,"Pval_RC_test"]=pvalue
     results[i_row,"h_RC_test"]=results[i_row,"Pval_RC_test"]<param$alpha
-  }
-  
-  ####################### AVRC test
-  if (param$incSubjObjTest==0) {
-    pvalue = ResamplingCriterionTest(data_per_subj$AS,data_per_subj$ntrials,data_per_subj_full,ThresholdObjTest,alpha,param,"AVRC")
+    ####################### AVRC test
+    pvalue = resampling_criterion_test_f(data_per_subj$AS,data_per_subj_full,ThresholdObjTest,alpha,param,"AVRC")
     results[i_row,"Pval_AVRC_test"]=pvalue
     results[i_row,"h_AVRC_test"]=results[i_row,"Pval_AVRC_test"]<param$alpha
-  }
-  
-  ####################### RC or AVRC
-  if (param$incSubjObjTest==0) {
-    results[i_row,"Pval_RCorAVRC_test"]=min(results[i_row,"Pval_RC_test"],results[i_row,"Pval_AVRC_test"])
-    results[i_row,"h_RCorAVRC_test"]=ifelse(results[i_row,"Pval_RC_test"]<(param$alpha/2) | results[i_row,"Pval_AVRC_test"]<(param$alpha/2),TRUE,FALSE)
+    
+    ####################### RC or AVRC
+    res_RCOrAVRC <- RCOrAVRC_f(data_per_subj$AS,data_per_subj_full,ThresholdObjTest,alpha,param)
+    results[i_row,"Pval_RCorAVRC_test"]=res_RCOrAVRC
+    results[i_row,"h_RCorAVRC_test"]=results[i_row,"Pval_RCorAVRC_test"]<param$alpha
   }
   
   ####################### Logistic mixed model
-  mat = matrix(ncol = 2, nrow = dim(data)[1])
-  df_LMM=data.frame(mat)
-  colnames(df_LMM)<-c("subj","correct")
-  
-  df_LMM$subj=data$subj
-  df_LMM$correct=as.numeric(data$correct)
-  
-  if (PlotFlag) {
-    for (bb in 1:dim(data_per_subj)[1]) { #subjects
-      ind=1:data_per_subj$ntrials[bb]
-      if (bb==1) { 
-        indplot=ind
-      } else { 
-        indplot=c(indplot,ind)
-      }
-    }
-    df_LMM$indplot=indplot
-    
-    #box plot
-    ggplot(df_LMM,aes(group=subj,y=correct)) +
-      geom_boxplot() + xlab('subject')
-    #seperate graphs for each group
-    ggplot(df_LMM,aes(x=indplot,y=correct,group=subj,color=subj)) +
-      geom_point()+
-      geom_smooth(method="glm",se=F,fullrange=F,formula=y~1,method.args=list(family=binomial)) +
-      facet_wrap(~subj)
-    #one graph with data points classified to groups
-    ggplot(df_LMM,aes(x=indplot,y=correct,group=subj,color=subj)) +
-      geom_point()+
-      geom_smooth(method="glm",se=F,fullrange=F,formula=y~1,method.args=list(family=binomial)) 
-  }
-  
-  df_LMM$subj=as.factor(df_LMM$subj)
-  df_LMM$correct=as.factor(df_LMM$correct)
-  
-  modelLMM<-glmer(correct ~1+(1|subj),data=df_LMM,family=binomial) # the intercept is undefined; the model looks for it, and the output will tell us if it is above chance
-  #calculate one sided p-value
-  pval=pnorm(summary(modelLMM)$coefficients[1,3],lower.tail = F)
-  results[i_row,"h_LMM_test"]=pval<param$alpha
-  results[i_row,"Pval_LMM_test"]=pval
-  
+  results <- GetTestResult(results, 'MMLR_test', MMLR_f, calc_sig_freq, data_per_subj$A, data_per_subj$ntrials, fixed_params, i_row)
+
   return(results)
 }
+
+AddCalcResults <- function(results, data_per_subj, ind) {
+  ############ calculations #############
+  #average num trials
+  results[ind,"meanNumTrials"]=mean(data_per_subj$ntrials)
+  
+  #std num trials
+  results[ind,"stdNumTrials"]=sd(data_per_subj$ntrials)
+  
+  #num subjects
+  results[ind,"numSubj"]=dim(data_per_subj)[1]
+  
+  #average success rate
+  results[ind,"meanAS"]=mean(data_per_subj$AS)
+  
+  #std success rate
+  results[ind,"stdAS"]=sd(data_per_subj$AS)
+  
+  #ste success rate
+  results[ind,"steAS"]=sd(data_per_subj$AS)/sqrt(dim(data_per_subj)[1])
+  
+  #max success rate
+  results[ind,"maxAS"]=max(data_per_subj$AS)
+  
+  #min success rate
+  results[ind,"minAS"]=min(data_per_subj$AS)
+  
+  return(results)
+}  

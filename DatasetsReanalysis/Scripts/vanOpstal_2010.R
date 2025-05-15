@@ -14,7 +14,11 @@ compareDataToPaper<-function(realdata,paper,num,datasetName){
 #Experiment 1
 
 #read the data set 
+<<<<<<< Updated upstream
 raw_data <- read_excel("./Datasets/VanOpstal/VanOpstal2010_Exp1.xlsx")
+=======
+raw_data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/VanOpstal/VanOpstal2010_Exp1.xlsx")
+>>>>>>> Stashed changes
 
 #create data_per_subj from the raw_data
 data_per_subj=data.frame(matrix(nrow = 22 , ncol = 0))
@@ -55,7 +59,11 @@ data_per_subj_1=data_per_subj
 rm(list=setdiff(ls(),c("data_1","data_per_subj_1","compareDataToPaper")))
 
 #read the data set 
+<<<<<<< Updated upstream
 raw_data <- read_excel("./Datasets/VanOpstal/VanOpstal2010_Exp2.xlsx")
+=======
+raw_data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/VanOpstal/VanOpstal2010_Exp2.xlsx")
+>>>>>>> Stashed changes
 
 #create data_per_subj from the raw_data
 data_per_subj=data.frame(matrix(nrow = 21 , ncol = 0))
@@ -96,7 +104,11 @@ data_per_subj_2=data_per_subj
 rm(list=setdiff(ls(),c("data_1","data_per_subj_1","data_2","data_per_subj_2","compareDataToPaper")))
 
 #read the data set 
+<<<<<<< Updated upstream
 raw_data <- read_excel("./Datasets/VanOpstal/VanOpstal2010_Exp3.xlsx")
+=======
+raw_data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/VanOpstal/VanOpstal2010_Exp3.xlsx")
+>>>>>>> Stashed changes
 
 #create data_per_subj from the raw_data
 data_per_subj=data.frame(matrix(nrow = 16 , ncol = 0))
@@ -139,4 +151,4 @@ data_per_subj_all$excObjTest=0
 
 #save data
 processed_data <- list(trial_by_trial = data_all, summary_tables = data_per_subj_all)
-save(processed_data, file = "./Data/vO_2010.RData")
+save(processed_data, file = "./DatasetsReanalysis/Data/vO_2010.RData")

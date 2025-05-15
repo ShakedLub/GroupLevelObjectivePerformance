@@ -6,7 +6,11 @@ rm(list=ls())
 
 #experiment 4
 #read the data set 
+<<<<<<< Updated upstream
 raw_data <- read_excel("./Datasets/VanGaal/pc_exp4.xlsx",col_names = FALSE)
+=======
+raw_data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/VanGaal/pc_exp4.xlsx",col_names = FALSE)
+>>>>>>> Stashed changes
 names(raw_data)<-c("SRunmasked","SR")
 raw_data=as.data.frame(raw_data)
 
@@ -46,4 +50,4 @@ data_per_subj$excObjTest=0
 
 #save data
 processed_data <- list(trial_by_trial = data, summary_tables = data_per_subj)
-save(processed_data, file = "./Data/vG_2014.RData")
+save(processed_data, file = "./DatasetsReanalysis/Data/vG_2014.RData")

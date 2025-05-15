@@ -19,7 +19,11 @@ rm(list=ls())
 ##################################################################################
 
 # direct task
+<<<<<<< Updated upstream
 perc <- read.table("./Datasets/Zerweck_et_al_2021/Experiment1/Experiment1_directTask.dat",header=T)
+=======
+perc <- read.table("./DatasetsReanalysis/PapersAndDownloadedData/Zerweck_et_al_2021/Experiment1/Experiment1_directTask.dat",header=T)
+>>>>>>> Stashed changes
 
 ##Remove too fast/slow responses:
 perc <- perc[perc$time_error=="Normal",]
@@ -83,7 +87,11 @@ rm(list=setdiff(ls(),c("perc_1","dirResults_1")))
 ##################################################################################
 
 # direct task
+<<<<<<< Updated upstream
 perc <- read.table("./Datasets/Zerweck_et_al_2021/Experiment2/Experiment2_directTask.dat",header=T)
+=======
+perc <- read.table("./DatasetsReanalysis/PapersAndDownloadedData/Zerweck_et_al_2021/Experiment2/Experiment2_directTask.dat",header=T)
+>>>>>>> Stashed changes
 
 ##Remove trials with display timing errors:
 perc <- perc[perc$TimingError== 0,]
@@ -96,8 +104,13 @@ perc <- perc[perc$ResponseTime=="Normal",]
 
 ##Add column with prime contrast values in cd/m:
 WD=getwd()
+<<<<<<< Updated upstream
 setwd("./Datasets/Zerweck_et_al_2021/Experiment2")
 source("local-lib_Exp2.R")
+=======
+setwd("./DatasetsReanalysis/PapersAndDownloadedData/Zerweck_et_al_2021/Experiment2")
+source("./DatasetsReanalysis/DatasetsReanalysis/Scripts\Zerweck_et_al_2021_local-lib_Exp2.R")
+>>>>>>> Stashed changes
 perc <- addColumnWithContrastAsCandela(perc)
 setwd(WD)
 
@@ -184,7 +197,11 @@ dirResults_3 = data.frame()
 ii=0
 for (PrimeDuration in PrimeDurations){
   ## Read data:
+<<<<<<< Updated upstream
   perc <- read.table(paste("./Datasets/Zerweck_et_al_2021/Experiment3/data_Exp3/om1203_percI_",PrimeDuration,".dat",sep=""),header=T)
+=======
+  perc <- read.table(paste("./DatasetsReanalysis/PapersAndDownloadedData/Zerweck_et_al_2021/Experiment3/data_Exp3/om1203_percI_",PrimeDuration,".dat",sep=""),header=T)
+>>>>>>> Stashed changes
   
   ##Exclude practice trials:
   perc <- perc[grep(".*Exp.*",perc$block_type),]
@@ -260,7 +277,11 @@ dirResults_4 = data.frame()
 ii=0
 for (PrimeDuration in PrimeDurations){
   ## Read data:
+<<<<<<< Updated upstream
   perc <- read.table(paste("./Datasets/Zerweck_et_al_2021/Experiment3/data_Exp3/om1203_percC_",PrimeDuration,".dat",sep=""),header=T)
+=======
+  perc <- read.table(paste("./DatasetsReanalysis/PapersAndDownloadedData/Zerweck_et_al_2021/Experiment3/data_Exp3/om1203_percC_",PrimeDuration,".dat",sep=""),header=T)
+>>>>>>> Stashed changes
   
   ##Exclude practice trials:
   perc <- perc[grep(".*Exp.*",perc$block_type),]
@@ -322,4 +343,4 @@ perc_final$excObjTest=0
 
 #save the data
 processed_data <- list(trial_by_trial = perc_final, summary_tables = dirResults_final)
-save(processed_data, file = "./Data/Z_2021.RData")
+save(processed_data, file = "./DatasetsReanalysis/Data/Z_2021.RData")

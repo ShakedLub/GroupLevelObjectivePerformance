@@ -6,11 +6,11 @@ LoadDataSets<- function () {
   data_per_subj_all=data.frame()
 
   #get file names
-  fileNames=Sys.glob("./Data/*.RData")
+  fileNames=Sys.glob("./DatasetsReanalysis/Data/*.RData")
 
-  for (ii in 1:length(fileNames)) { #papers
+  for (paper_ind in 1:length(fileNames)) { #papers
     #load datasets from one paper
-    load(fileNames[ii])
+    load(fileNames[paper_ind])
     data=processed_data$trial_by_trial
     data_per_subj=processed_data$summary_tables
     rm(processed_data)
@@ -27,6 +27,9 @@ LoadDataSets<- function () {
     
     rm(data,data_per_subj)
   }
+  
+  #change SR (success rate) to AS (awareness score)
+  colnames(data_per_subj_all)[which(names(data_per_subj_all)=="SR")]="AS"
   
   processed_data_all <- list(trial_by_trial = data_all, summary_tables = data_per_subj_all)
   return(processed_data_all)

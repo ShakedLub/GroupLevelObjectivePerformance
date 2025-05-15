@@ -4,7 +4,11 @@ library(dplyr)
 rm(list=ls()) 
 
 #load processed data
+<<<<<<< Updated upstream
 load('./Datasets/Faivre_et_al_2014/all_Faivre et al._2014.RData')
+=======
+load('./DatasetsReanalysis/PapersAndDownloadedData/Faivre_et_al_2014/all_Faivre et al._2014.RData')
+>>>>>>> Stashed changes
 
 data=processed_data$trial_by_trial
 data_per_subj=processed_data$summary_tables
@@ -53,4 +57,4 @@ for (ii in 1:length(numSubj)) {
 #save data
 rm(processed_data)
 processed_data <- list(trial_by_trial = data, summary_tables = data_per_subj)
-save(processed_data, file = "./Data/F_2014.RData")
+save(processed_data, file = "./DatasetsReanalysis/Data/F_2014.RData")
