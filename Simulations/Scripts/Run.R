@@ -48,11 +48,9 @@ close(progress_bar)
 stopCluster(sim_cluster)
 
 ############################    Save results    ################################ 
-save(all_results, sim_conditions_table, fixed_params, 
-     file=paste(paste(analysis_types,collapse = '_'), "sim_data.RData", sep = '_'))
-load(paste(paste(analysis_types,collapse = '_'), "sim_data.RData", sep = '_'))
+save_fn <- paste0('Simulations\\Output\\',paste(paste(analysis_types,collapse = '_'), "sim_data.RData", sep = '_'))
+save(all_results, sim_conditions_table, fixed_params, file=save_fn)
 
 ############################    Plot results    ################################ 
 source("./Simulations/Scripts/GrandScatterPlot.R")
-ScatterPlots(all_results,sim_conditions_table,fixed_params)
 
