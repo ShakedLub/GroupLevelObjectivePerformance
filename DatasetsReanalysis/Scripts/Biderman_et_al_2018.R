@@ -4,7 +4,7 @@ library(dplyr)
 rm(list=ls()) 
 
 #load processed data
-load('./PapersAndDownloadedData/Biderman_Mudrik_2018/all_Biderman_Mudrik_2018.RData')
+load('./Datasets/Biderman_Mudrik_2018/all_Biderman_Mudrik_2018.RData')
 
 data=processed_data$trial_by_trial
 data_per_subj=processed_data$summary_tables

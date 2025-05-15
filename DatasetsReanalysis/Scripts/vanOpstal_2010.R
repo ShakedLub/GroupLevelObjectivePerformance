@@ -14,7 +14,7 @@ compareDataToPaper<-function(realdata,paper,num,datasetName){
 #Experiment 1
 
 #read the data set 
-raw_data <- read_excel("./PapersAndDownloadedData/VanOpstal/VanOpstal2010_Exp1.xlsx")
+raw_data <- read_excel("./Datasets/VanOpstal/VanOpstal2010_Exp1.xlsx")
 
 #create data_per_subj from the raw_data
 data_per_subj=data.frame(matrix(nrow = 22 , ncol = 0))
@@ -55,7 +55,7 @@ data_per_subj_1=data_per_subj
 rm(list=setdiff(ls(),c("data_1","data_per_subj_1","compareDataToPaper")))
 
 #read the data set 
-raw_data <- read_excel("./PapersAndDownloadedData/VanOpstal/VanOpstal2010_Exp2.xlsx")
+raw_data <- read_excel("./Datasets/VanOpstal/VanOpstal2010_Exp2.xlsx")
 
 #create data_per_subj from the raw_data
 data_per_subj=data.frame(matrix(nrow = 21 , ncol = 0))
@@ -96,7 +96,7 @@ data_per_subj_2=data_per_subj
 rm(list=setdiff(ls(),c("data_1","data_per_subj_1","data_2","data_per_subj_2","compareDataToPaper")))
 
 #read the data set 
-raw_data <- read_excel("./PapersAndDownloadedData/VanOpstal/VanOpstal2010_Exp3.xlsx")
+raw_data <- read_excel("./Datasets/VanOpstal/VanOpstal2010_Exp3.xlsx")
 
 #create data_per_subj from the raw_data
 data_per_subj=data.frame(matrix(nrow = 16 , ncol = 0))

@@ -9,7 +9,7 @@ rm(list=ls())
 
 #################################################exp 1
 #read the data set 
-data <- read_excel("./PapersAndDownloadedData/Skora/Skora_et_al_2020_exp_1/Full_long_incl.RT_02.07_100ms_CONTROL ONLY.xlsx")
+data <- read_excel("./Datasets/Skora/Skora_et_al_2020_exp_1/Full_long_incl.RT_02.07_100ms_CONTROL ONLY.xlsx")
 
 #exclude conscious trials 
 #exclusion based on paper criteria: trials with correct symmetry judgment and with confidence
@@ -94,7 +94,7 @@ rm(list=setdiff(ls(),c("data_filtered_1","data_per_subj_1")))
 ############################################################################
 
 #read the data set 
-data <- read_excel("./PapersAndDownloadedData/Skora/Skora_et_al_2020_exp_2/unconscious delay conditioning_Feb2020_full data.xlsx")
+data <- read_excel("./Datasets/Skora/Skora_et_al_2020_exp_2/unconscious delay conditioning_Feb2020_full data.xlsx")
 
 #exclude conscious trials
 #exclusion based on paper criteria: trials with correct symmetry judgment and with confidence

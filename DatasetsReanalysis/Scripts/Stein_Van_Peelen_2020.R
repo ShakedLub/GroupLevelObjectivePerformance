@@ -2,7 +2,7 @@ rm(list=ls())
 
 ############ Experiment 3
 #load datasets
-SVP3_data<-read_excel("./PapersAndDownloadedData/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_3_rawdata/SVP3_data.xlsx",col_names = FALSE) 
+SVP3_data<-read_excel("./Datasets/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_3_rawdata/SVP3_data.xlsx",col_names = FALSE) 
 #data:
 #1- subj number
 #2- presentation time (1-5)
@@ -14,7 +14,7 @@ SVP3_data<-read_excel("./PapersAndDownloadedData/Stein_Van_Peelen_2020/Stein_Van
 names(SVP3_data)<-c("subj","presentationTime","TargetAppear","Orientation","localizationCorrect","correct","PAS")
 SVP3_data=as.data.frame(SVP3_data)
 
-SVP3_data_per_subj<-read_excel("./PapersAndDownloadedData/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_3_rawdata/SVP3_data_per_subj.xlsx",col_names = FALSE)
+SVP3_data_per_subj<-read_excel("./Datasets/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_3_rawdata/SVP3_data_per_subj.xlsx",col_names = FALSE)
 #data_per_subj:
 #1- subj number
 #2- presentation time
@@ -34,7 +34,7 @@ for (ii in 1:length(vecPresentationTimes)){
 
 ############ Experiment 4a
 #load datasets
-SVP4a_data<-read_excel("./PapersAndDownloadedData/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_4a_rawdata/SVP4a_data.xlsx",col_names = FALSE) 
+SVP4a_data<-read_excel("./Datasets/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_4a_rawdata/SVP4a_data.xlsx",col_names = FALSE) 
 #data:
 #1- subj number
 #2- presentation time (1-4)
@@ -44,7 +44,7 @@ SVP4a_data<-read_excel("./PapersAndDownloadedData/Stein_Van_Peelen_2020/Stein_Va
 names(SVP4a_data)<-c("subj","presentationTime","cueValidity","localizationCorrect","correct")
 SVP4a_data=as.data.frame(SVP4a_data)
 
-SVP4a_data_per_subj<-read_excel("./PapersAndDownloadedData/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_4a_rawdata/SVP4a_data_per_subj.xlsx",col_names = FALSE)
+SVP4a_data_per_subj<-read_excel("./Datasets/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_4a_rawdata/SVP4a_data_per_subj.xlsx",col_names = FALSE)
 #data_per_subj:
 #1- subj number
 #2- presentation time
@@ -63,7 +63,7 @@ for (ii in 1:length(vecPresentationTimes)) {
 }
 
 ############ Experiment 4b
-SVP4b_data<-read_excel("./PapersAndDownloadedData/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_4b_rawdata/SVP4b_data.xlsx",col_names = FALSE) 
+SVP4b_data<-read_excel("./Datasets/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_4b_rawdata/SVP4b_data.xlsx",col_names = FALSE) 
 #load datasets
 #data:
 #1- subj number
@@ -74,7 +74,7 @@ SVP4b_data<-read_excel("./PapersAndDownloadedData/Stein_Van_Peelen_2020/Stein_Va
 names(SVP4b_data)<-c("subj","presentationTime","cueValidity","localizationCorrect","correct")
 SVP4b_data=as.data.frame(SVP4b_data)
 
-SVP4b_data_per_subj<-read_excel("./PapersAndDownloadedData/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_4b_rawdata/SVP4b_data_per_subj.xlsx",col_names = FALSE)
+SVP4b_data_per_subj<-read_excel("./Datasets/Stein_Van_Peelen_2020/Stein_Van_Peelen_2020_exp_4b_rawdata/SVP4b_data_per_subj.xlsx",col_names = FALSE)
 #data_per_subj:
 #1- subj number
 #2- presentation time

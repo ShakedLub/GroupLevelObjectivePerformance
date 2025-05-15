@@ -9,7 +9,7 @@ chance=0.5
 alpha=0.05
 
 #load processed data
-load('./PapersAndDownloadedData/Hesselman_etal_2016/all_Hesselman_etal_2016.RData')
+load('./Datasets/Hesselman_etal_2016/all_Hesselman_etal_2016.RData')
 
 data=processed_data$trial_by_trial
 data_per_subj=processed_data$summary_tables
