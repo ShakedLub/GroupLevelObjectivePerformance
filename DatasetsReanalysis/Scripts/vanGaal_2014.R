@@ -6,11 +6,8 @@ rm(list=ls())
 
 #experiment 4
 #read the data set 
-<<<<<<< Updated upstream
-raw_data <- read_excel("./Datasets/VanGaal/pc_exp4.xlsx",col_names = FALSE)
-=======
-raw_data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/VanGaal/pc_exp4.xlsx",col_names = FALSE)
->>>>>>> Stashed changes
+raw_data <- read_excel("./DatasetsReanalysis/Datasets/VanGaal/pc_exp4.xlsx",col_names = FALSE)
+
 names(raw_data)<-c("SRunmasked","SR")
 raw_data=as.data.frame(raw_data)
 

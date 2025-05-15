@@ -27,7 +27,7 @@ exclude_obs <- function(d, subj){
 # uncertain = (random) peripherally presented primes
 
 #read the data set 
-data <- read.csv("./Datasets/Benthien_Hesselmann_2021/CFSlocation_data.csv", header=F, sep=",", dec=".")
+data <- read.csv("./DatasetsReanalysis/Datasets/Benthien_Hesselmann_2021/CFSlocation_data.csv", header=F, sep=",", dec=".")
 
 #column names
 colnames(data) <- c("exp","subj","trial","prime","cond","pos","probe","alpha","RT","resp1","pre","RT2","resp2")
@@ -89,5 +89,5 @@ data_check_cfs_correct$excObjTest=0
 
 #save data
 processed_data <- list(trial_by_trial = data_check_cfs, summary_tables = data_check_cfs_correct)
-save(processed_data, file = "./Data/BH_2021.RData")
+save(processed_data, file = "./DatasetsReanalysis/Data/BH_2021.RData")
 

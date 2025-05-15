@@ -14,11 +14,7 @@ compareDataToPaper<-function(realdata,paper,num,datasetName){
 #Experiment 1 small
 
 #read the data set 
-<<<<<<< Updated upstream
-raw_data <- read_excel("./Datasets/VanOpstal/VanOpstal2022_Exp1.xlsx")
-=======
-raw_data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/VanOpstal/VanOpstal2022_Exp1.xlsx")
->>>>>>> Stashed changes
+raw_data <- read_excel("./DatasetsReanalysis/Datasets/VanOpstal/VanOpstal2022_Exp1.xlsx")
 
 #exclude subjects from the unmasked condition
 raw_data <- filter(raw_data, Condition == "Masked") 
@@ -150,11 +146,7 @@ rm(list=setdiff(ls(),c("data_all_1","data_per_subj_all_1","compareDataToPaper"))
 ############################################################################
 #Experiment  2 Small
 #read the data set 
-<<<<<<< Updated upstream
-raw_data <- read_excel("./Datasets/VanOpstal/VanOpstal2022_Exp2.xlsx")
-=======
-raw_data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/VanOpstal/VanOpstal2022_Exp2.xlsx")
->>>>>>> Stashed changes
+raw_data <- read_excel("./DatasetsReanalysis/Datasets/VanOpstal/VanOpstal2022_Exp2.xlsx")
 
 #exclude subjects from the unmasked condition
 raw_data <- filter(raw_data, Condition == "U") 

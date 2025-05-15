@@ -14,11 +14,7 @@ compareDataToPaper<-function(realdata,paper,num,datasetName){
 #Experiment 1
 
 #read the data set 
-<<<<<<< Updated upstream
-raw_data <- read_excel("./Datasets/VanOpstal/VanOpstal2011_Exp1_setting.xlsx")
-=======
-raw_data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/VanOpstal/VanOpstal2011_Exp1_setting.xlsx")
->>>>>>> Stashed changes
+raw_data <- read_excel("./DatasetsReanalysis/Datasets/VanOpstal/VanOpstal2011_Exp1_setting.xlsx")
 
 #create data_per_subj from the raw_data
 data_per_subj=data.frame(matrix(nrow = 19 , ncol = 0))

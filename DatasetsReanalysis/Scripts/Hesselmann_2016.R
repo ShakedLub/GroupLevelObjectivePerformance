@@ -9,7 +9,7 @@ chance=0.5
 alpha=0.05
 
 #load processed data
-load('./Datasets/Hesselman_etal_2016/all_Hesselman_etal_2016.RData')
+load('./DatasetsReanalysis/Datasets/Hesselman_etal_2016/all_Hesselman_etal_2016.RData')
 
 data=processed_data$trial_by_trial
 data_per_subj=processed_data$summary_tables
@@ -72,6 +72,6 @@ data=rbind(data_1,data_2)
 #save data 
 rm(processed_data)
 processed_data <- list(trial_by_trial = data, summary_tables = data_per_subj)
-save(processed_data, file = "./Data/H_2016.RData")
+save(processed_data, file = "./DatasetsReanalysis/Data/H_2016.RData")
 
 

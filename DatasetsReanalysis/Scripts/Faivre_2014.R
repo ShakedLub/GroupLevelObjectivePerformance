@@ -4,11 +4,7 @@ library(dplyr)
 rm(list=ls()) 
 
 #load processed data
-<<<<<<< Updated upstream
-load('./Datasets/Faivre_et_al_2014/all_Faivre et al._2014.RData')
-=======
-load('./DatasetsReanalysis/PapersAndDownloadedData/Faivre_et_al_2014/all_Faivre et al._2014.RData')
->>>>>>> Stashed changes
+load('./DatasetsReanalysis/Datasets/Faivre_et_al_2014/all_Faivre et al._2014.RData')
 
 data=processed_data$trial_by_trial
 data_per_subj=processed_data$summary_tables

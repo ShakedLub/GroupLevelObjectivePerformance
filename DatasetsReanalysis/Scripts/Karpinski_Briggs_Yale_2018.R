@@ -8,11 +8,7 @@ library(readxl)
 rm(list=ls()) 
 
 #read the data set 
-<<<<<<< Updated upstream
-data_per_subj <- read.csv("./Datasets/Karpinski_Briggs_Yale_2018/Karp.csv")
-=======
-data_per_subj <- read.csv("./DatasetsReanalysis/PapersAndDownloadedData/Karpinski_Briggs_Yale_2018/Karp.csv")
->>>>>>> Stashed changes
+data_per_subj <- read.csv("./DatasetsReanalysis/Datasets/Karpinski_Briggs_Yale_2018/Karp.csv")
 
 #exclude subjects that are aware
 
@@ -52,13 +48,9 @@ int_col_name="...16"
 numT=64
 
 #get name of files that are according to subject name and which kind of file they are
-<<<<<<< Updated upstream
-cond_12_filenames=list.files(path="./Datasets/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions12")
-cond_34_filenames=list.files(path="./Datasets/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions34")
-=======
-cond_12_filenames=list.files(path="./DatasetsReanalysis/PapersAndDownloadedData/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions12")
-cond_34_filenames=list.files(path="./DatasetsReanalysis/PapersAndDownloadedData/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions34")
->>>>>>> Stashed changes
+cond_12_filenames=list.files(path="./DatasetsReanalysis/Datasets/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions12")
+cond_34_filenames=list.files(path="./DatasetsReanalysis/Datasets/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions34")
+
 for (ii in 1:dim(data_per_subj)[1]) { #subjects
   subjNum=data_per_subj[ii,"subj"]
   SR=data_per_subj[ii,"SR"]
@@ -68,19 +60,11 @@ for (ii in 1:dim(data_per_subj)[1]) { #subjects
   if (cond == 1 | cond == 2) { #cond 1 2
     fileInd=which(str_detect(cond_12_filenames,as.character(subjNum)))
     fileName=cond_12_filenames[fileInd]
-<<<<<<< Updated upstream
-    path="./Datasets/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions12/"
+    path="./DatasetsReanalysis/Datasets/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions12/"
   } else if (cond == 3 | cond == 4) { #cond 3 4
     fileInd=which(str_detect(cond_34_filenames,as.character(subjNum)))
     fileName=cond_34_filenames[fileInd]
-    path="./Datasets/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions34/"
-=======
-    path="./DatasetsReanalysis/PapersAndDownloadedData/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions12/"
-  } else if (cond == 3 | cond == 4) { #cond 3 4
-    fileInd=which(str_detect(cond_34_filenames,as.character(subjNum)))
-    fileName=cond_34_filenames[fileInd]
-    path="./DatasetsReanalysis/PapersAndDownloadedData/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions34/"
->>>>>>> Stashed changes
+    path="./DatasetsReanalysis/Datasets/Karpinski_Briggs_Yale_2018/Karpinski_Briggs_Yale_2018Data/UnconsciousArithmeticData/Conditions34/"
   }
   
   if(!is_empty(fileInd)) {

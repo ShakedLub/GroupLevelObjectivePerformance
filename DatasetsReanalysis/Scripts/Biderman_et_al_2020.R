@@ -21,11 +21,7 @@ compareDataToPaper<-function(realdata,paper,num,datasetName){
 ############################################################################
 #Experiment 1b
 #read the data set 
-<<<<<<< Updated upstream
-data <- read_excel("./Datasets/Biderman_et_al_2020/Post1bAllSubj.xlsx",col_names = FALSE)
-=======
-data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/Biderman_et_al_2020/Post1bAllSubj.xlsx",col_names = FALSE)
->>>>>>> Stashed changes
+data <- read_excel("./DatasetsReanalysis/Datasets/Biderman_et_al_2020/Post1bAllSubj.xlsx",col_names = FALSE)
 colnames(data)=c("Subject","Distance","Context","Resp13", "RT", "Vis")
 #exclude subjects that are excluded not due to the objective test 812,828,831,832
 data <- subset(data, Subject!=812 & Subject!=828 & Subject!=831 & Subject!=832)
@@ -43,11 +39,7 @@ data_per_subj <- dplyr::summarise(group_by(data,subj),
                                   ntrials = length(correct))
 
 #check accuracy calculation for subjects who are not excluded to objective awareness
-<<<<<<< Updated upstream
-data_check_acc <- read.csv("./Datasets/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E1b_acc_dprime.csv")
-=======
-data_check_acc <- read.csv("./DatasetsReanalysis/PapersAndDownloadedData/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E1b_acc_dprime.csv")
->>>>>>> Stashed changes
+data_check_acc <- read.csv("./DatasetsReanalysis/Datasets/Biderman_et_al_2020/Code/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E1b_acc_dprime.csv")
 data_check=subset(data_per_subj, subj!=807 & subj!=808 & subj!=810 & subj!=815 & subj!=817) #objective aware subj
 if (!identical(round(data_check$SR,5) ,data_check_acc$acc)) {
   stop(paste("In e1b the data is not the same as in the paper"))
@@ -88,11 +80,7 @@ data_per_subj_1=data_per_subj
 rm(list=setdiff(ls(),c("data_1","data_per_subj_1","compareDataToPaper")))
 
 #read the data set 
-<<<<<<< Updated upstream
-data <- read_excel("./Datasets/Biderman_et_al_2020/Post2AllSubj.xlsx",col_names = FALSE)
-=======
-data <- read_excel("./DatasetsReanalysis/PapersAndDownloadedData/Biderman_et_al_2020/Post2AllSubj.xlsx",col_names = FALSE)
->>>>>>> Stashed changes
+data <- read_excel("./DatasetsReanalysis/Datasets/Biderman_et_al_2020/Post2AllSubj.xlsx",col_names = FALSE)
 colnames(data)=c("Subject","Distance","Context","Resp13", "RT", "Vis")
 #exclude subjects that are excluded not due to the objective test 
 data <- subset(data, Subject!=603 & Subject!=623 & Subject!=626)
@@ -110,11 +98,7 @@ data_per_subj <- dplyr::summarise(group_by(data,subj),
                                   ntrials = length(correct))
 
 #check accuracy calculation for subjects who are not excluded due to objective test
-<<<<<<< Updated upstream
-data_check_acc <- read.csv("./Datasets/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E2_acc_dprime.csv")
-=======
-data_check_acc <- read.csv("./DatasetsReanalysis/PapersAndDownloadedData/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E2_acc_dprime.csv")
->>>>>>> Stashed changes
+data_check_acc <- read.csv("./DatasetsReanalysis/Datasets/Biderman_et_al_2020/Code/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E2_acc_dprime.csv")
 data_check=subset(data_per_subj, subj!=607 & subj!=608 & subj!=619) #objective aware subjects
 if (!identical(round(data_check$SR,5) ,data_check_acc$acc)) {
   stop(paste("In e2 the data is not the same as in the paper"))
@@ -155,11 +139,7 @@ data_per_subj_2=data_per_subj
 rm(list=setdiff(ls(),c("data_1","data_per_subj_1","data_2","data_per_subj_2","compareDataToPaper")))
 
 #read the data set
-<<<<<<< Updated upstream
-data <- read.csv("./Datasets/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/Data/Summary_Matrices/E3b_Post.csv")
-=======
-data <- read.csv("./DatasetsReanalysis/PapersAndDownloadedData/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/AnalysesCodes/Data/Summary_Matrices/E3b_Post.csv")
->>>>>>> Stashed changes
+data <- read.csv("./DatasetsReanalysis/Datasets/Biderman_et_al_2020/Code/AnalysesCodes/Data/Summary_Matrices/E3b_Post.csv")
 
 #correct responses
 data$correct <- data$ClassRef
@@ -174,11 +154,8 @@ data_per_subj <- dplyr::summarise(group_by(data,subj),
                                   ntrials = length(correct))
 
 #check accuracy calculation
-<<<<<<< Updated upstream
-data_check_acc <- read.csv("./Datasets/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E3b_acc_dprime.csv")
-=======
-data_check_acc <- read.csv("./DatasetsReanalysis/PapersAndDownloadedData/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E3b_acc_dprime.csv")
->>>>>>> Stashed changes
+data_check_acc <- read.csv("./DatasetsReanalysis/Datasets/Biderman_et_al_2020/Code/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E3b_acc_dprime.csv")
+
 
 if (!identical(round(data_per_subj$SR,5) ,data_check_acc$acc)) {
   stop(paste("In e3b the data is not the same as in the paper"))
@@ -214,11 +191,7 @@ data_per_subj_3=data_per_subj
 rm(list=setdiff(ls(),c("data_1","data_per_subj_1","data_2","data_per_subj_2","data_3","data_per_subj_3","compareDataToPaper")))
 
 #read the data set 
-<<<<<<< Updated upstream
-data <- read.csv("./Datasets/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/Data/Summary_Matrices/E7_Post.csv")
-=======
-data <- read.csv("./DatasetsReanalysis/PapersAndDownloadedData/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/AnalysesCodes/Data/Summary_Matrices/E7_Post.csv")
->>>>>>> Stashed changes
+data <- read.csv("./DatasetsReanalysis/Datasets/Biderman_et_al_2020/Code/AnalysesCodes/Data/Summary_Matrices/E7_Post.csv")
 # Condition: 0 = categorical cond; 1 = lexical cond 
 
 #correct responses
@@ -243,11 +216,7 @@ data_per_subj_lexical <- dplyr::summarise(group_by(data_lexical,subj),
                                               ntrials = length(correct))
 
 #check accuracy calculation
-<<<<<<< Updated upstream
-data_check_acc <- read.csv("./Datasets/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E7_acc_dprime.csv")
-=======
-data_check_acc <- read.csv("./DatasetsReanalysis/PapersAndDownloadedData/Biderman_et_al_2020/Experimental and analysis codes/AnalysesCodes/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E7_acc_dprime.csv")
->>>>>>> Stashed changes
+data_check_acc <- read.csv("./DatasetsReanalysis/Datasets/Biderman_et_al_2020/Code/AnalysesCodes/Data/Summary_Matrices/accuracy_dprime/E7_acc_dprime.csv")
 
 if (!identical(round(data_per_subj_categorical$SR,5) ,data_check_acc$acc_cat)) {
   stop(paste("In e4b the categorical data is not the same as in the paper"))
