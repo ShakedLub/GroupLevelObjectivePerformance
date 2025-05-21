@@ -40,7 +40,6 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
   #create a vector with locations of vertical lines between datasets
   vecLines=1:(length(unique(results_preprocessed_long_misMatch$dataset))-1)+0.5
   
-  
   #change dataset names to have space instead of underscore
   results_preprocessed_long_misMatch$dataset = gsub('_',' ',results_preprocessed_long_misMatch$dataset)
   
@@ -74,8 +73,9 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
             strip.placement = "outside")
     
     ggsave('./Output/MisMatchMain.jpg',f1)
-    ggsave('./Output/MisMatchMain.svg',f1)
+    
   } else {
+    
     f1=ggplot(results_preprocessed_long_misMatch, aes(x=dataset, y=log.pvalue, fill=test)) +
       geom_bar(alpha=0.5,stat="identity",position = position_dodge())+
       scale_fill_manual(values=c("palegreen4","bisque3","skyblue4","darkorange2","cyan4"),name="")+
@@ -93,6 +93,7 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
             panel.grid.minor = element_blank())
     
     ggsave('./Output/MisMatchSupp.jpg',f1) 
+    
   }
   
   #################### figure  2 histograms

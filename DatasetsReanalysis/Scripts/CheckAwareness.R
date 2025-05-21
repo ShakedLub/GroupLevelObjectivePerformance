@@ -38,6 +38,7 @@ CheckAwareness<-function(data_per_subj,data,data_per_subj_full,numExcObjTest,Thr
     pvalue = resampling_criterion_test_f(data_per_subj$AS,data_per_subj_full,ThresholdObjTest,alpha,param,"RC")
     results[i_row,"Pval_RC_test"]=pvalue
     results[i_row,"h_RC_test"]=results[i_row,"Pval_RC_test"]<param$alpha
+    
     ####################### AVRC test
     pvalue = resampling_criterion_test_f(data_per_subj$AS,data_per_subj_full,ThresholdObjTest,alpha,param,"AVRC")
     results[i_row,"Pval_AVRC_test"]=pvalue

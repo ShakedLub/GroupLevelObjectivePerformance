@@ -1,5 +1,4 @@
-#this script create one plot from all simulation results 
-#in a folder
+#this script create one plot from all simulation results and saves the plot
 
 ## Load required R packages
 library(tidyverse)
@@ -11,17 +10,18 @@ library(svglite)
 library(RColorBrewer)
 library(scales)
 library(gridExtra)
+library(ggh4x)
 
 ## clear workspace
 rm(list=ls())
 
 ## parameters
-optionImage=3 
-#1=test types: GBC, T, MMLR, GBBayes, TBayes
+optionImage = 4 
+#1 = test types: GBC, T, MMLR, GBBayes, TBayes
 #create also a Bayesian image:  GBBayes, TBayes, with H0 for supplementary
-#2=test types: GBC, GB, Chi
-#3=GBC, GlobalNull
-#4= GBBayes, TBayes, GB_Bayes_Uninformative
+#2 = test types: GBC, GB, Chi
+#3 = GBC, GlobalNull
+#4 = GBBayes, TBayes, GB_Bayes_Uninformative
 
 ## load all results to one dataframe
 fileName=Sys.glob('./Simulations/Output/*.RData')
@@ -41,7 +41,6 @@ all_results$sig_perc=all_results$sig_perc*100
 all_results$null_perc=all_results$null_perc*100
 
 # Update test names
-all_results$test=recode_factor(all_results$test, MMLR="MMLR")
 all_results$test=recode_factor(all_results$test, GB_Bayes="GBBayes")
 
 #include only the statistical tests wanted
@@ -55,17 +54,17 @@ if (optionImage==1) {
   all_results=filter(all_results, test == "GBBayes" | test == "GB_Bayes_Uninformative" | test == "TBayes")
 }
 
-#change order of analysis type presentation 
-all_results$analysis_type=factor(all_results$analysis_type,levels=c('Unaware','Mixed','Small_spread','Large_spread'))
-
 #calculate CI for alpha=0.05 based on the number of iterations
 CI=qbinom(c(0.025,0.975),size=fixed_params@n_iterations,prob=(fixed_params@alpha))
 CI=(CI/fixed_params@n_iterations)*100
 
-# Create data for lines
-data_hline1= data.frame(analysis_type = unique(all_results$analysis_type),hline = c(CI[1],NA,NA,NA))
-data_hline2= data.frame(analysis_type = unique(all_results$analysis_type),hline = c(CI[2],NA,NA,NA))
-data_hline3= data.frame(analysis_type = unique(all_results$analysis_type),hline = c(fixed_params@alpha*100,NA,NA,NA))
+#change order of analysis type presentation 
+all_results$analysis_type=factor(all_results$analysis_type,levels=c('Unaware','Mixed','Small_spread','Large_spread'))
+
+# Create data for lines (here the different analysis type are not in the same order as defined above)
+data_hline1= data.frame(analysis_type = unique(all_results$analysis_type),hline = c(NA,NA,NA,CI[1]))
+data_hline2= data.frame(analysis_type = unique(all_results$analysis_type),hline = c(NA,NA,NA,CI[2]))
+data_hline3= data.frame(analysis_type = unique(all_results$analysis_type),hline = c(NA,NA,NA,fixed_params@alpha*100))
 
 # New facet label names for simulation names
 analysisName.labs <- c('Unaware','Mixed','Aware small var','Aware large var')
@@ -125,14 +124,22 @@ if (optionImage==1) {
   f1=ggplot(all_results, aes(x = n_participants, y = sig_perc, group=test, color=test)) +
     geom_line(alpha=0.4)+
     geom_point(size=2,alpha=0.4)+
-    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
-    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
-    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
     theme_bw() + 
     xlab('Participants') +
     ylab('% Significant') +
-    facet_grid(analysis_type ~ test_type+ mean_trials , switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) +
-    scale_color_manual(values=c("red","darkorange2","cyan4","purple","blue"),name="")+
+    ggh4x::facet_grid2(analysis_type ~ test_type+ mean_trials , switch = 'y', scales = "free_y", labeller = labeller(analysis_type = analysisName.labs)) + 
+    ggh4x::facetted_pos_scales( 
+      y = list( 
+        `facet_row == 1` = scale_y_continuous(limits = c(0, 6), breaks = c(1,2,3,4,5)), 
+        `facet_row == 2` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 3` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 4` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)) 
+      ) 
+    ) +
+    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
+    scale_color_manual(values=c("red","darkorange2","cyan4","purple","blue"),name="") +
     theme(axis.title.x = element_text(size=12),
           axis.title.y = element_text(size=12),
           axis.text.y= element_text(size=12),
@@ -145,21 +152,27 @@ if (optionImage==1) {
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
   
- 
-  ggsave('./Simulations/Output/SimulationsResultMain.jpg',f1)
-  #ggsave('./Simulations/Output/plotGrandResultMain.svg',f1)
-  
+  ggsave('./Simulations/Output/SimulationsResultsMain.jpg',f1)
+
   #Bayesian plot for supplementary with H0
   f2=ggplot(all_results_B_Supp, aes(x = n_participants, y = sig_perc, group=test, color=test)) +
     geom_line(alpha=0.4)+
     geom_point(size=2,alpha=0.4)+
-    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
-    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
-    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
     theme_bw() + 
     xlab('Participants') +
     ylab('% Significant') +
-    facet_grid(analysis_type ~ mean_trials, switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) +
+    ggh4x::facet_grid2(analysis_type ~ mean_trials, switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) + 
+    ggh4x::facetted_pos_scales( 
+      y = list( 
+        `facet_row == 1` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 2` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 3` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 4` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)) 
+      ) 
+    ) +
+    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
     scale_color_manual(values=c("deeppink","purple","deepskyblue","blue"),name="")+
     theme(axis.title.x = element_text(size=12),
           axis.title.y = element_text(size=12),
@@ -173,20 +186,28 @@ if (optionImage==1) {
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
 
-
   ggsave('./Simulations/Output/SimulationsBayesResultsSupp.jpg',f2)
   
 } else if (optionImage==2) {
+  
   f1=ggplot(all_results_F, aes(x = n_participants, y = sig_perc, group=test, color=test)) +
     geom_line(alpha=0.4)+
     geom_point(size=2,alpha=0.4)+
-    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
-    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
-    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
     theme_bw() + 
     xlab('Participants') +
     ylab('% Significant') +
-    facet_grid(analysis_type ~ mean_trials, switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) +
+    ggh4x::facet_grid2(analysis_type ~ mean_trials, switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) + 
+    ggh4x::facetted_pos_scales( 
+      y = list( 
+        `facet_row == 1` = scale_y_continuous(limits = c(4, 6), breaks = c(4,4.5,5,5.5,6)), 
+        `facet_row == 2` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 3` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 4` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)) 
+      ) 
+    ) +
+    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
     scale_color_manual(values=c("red","pink3","dodgerblue1"),name="")+
     theme(axis.title.x = element_text(size=12),
           axis.text.x = element_text(size=12),
@@ -201,19 +222,27 @@ if (optionImage==1) {
           panel.grid.minor = element_blank())
   
   ggsave('./Simulations/Output/SimulationsFreqResultSupp.jpg',f1)
-  #ggsave('./Simulations/Output/plotGrandResultSupp.svg',f1)
   
 } else if (optionImage==3) {
+  
   f1=ggplot(all_results_F, aes(x = n_participants, y = sig_perc, group=test, color=test)) +
     geom_line(alpha=0.4)+
     geom_point(size=2,alpha=0.4)+
-    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
-    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
-    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
     theme_bw() + 
     xlab('Participants') +
     ylab('% Significant') +
-    facet_grid(analysis_type ~ mean_trials, switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) +
+    ggh4x::facet_grid2(analysis_type ~ mean_trials, switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) + 
+    ggh4x::facetted_pos_scales( 
+      y = list( 
+        `facet_row == 1` = scale_y_continuous(limits = c(0, 6), breaks = c(1,2,3,4,5)), 
+        `facet_row == 2` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 3` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 4` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)) 
+      ) 
+    ) +
+    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
     scale_color_manual(values=c("red","darkturquoise"),name="")+
     theme(axis.title.x = element_text(size=12),
           axis.text.x = element_text(size=12),
@@ -230,17 +259,26 @@ if (optionImage==1) {
   ggsave('./Simulations/Output/SimulationsGlobalNullSupp.jpg',f1)
   
 } else if (optionImage==4) {
+  
   #Bayesian plot for supplementary with H0
   f1=ggplot(all_results_B_Supp, aes(x = n_participants, y = sig_perc, group=test, color=test)) +
     geom_line(alpha=0.4)+
     geom_point(size=2,alpha=0.4)+
-    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
-    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
-    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
     theme_bw() + 
     xlab('Participants') +
     ylab('% Significant') +
-    facet_grid(analysis_type ~ mean_trials, switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) +
+    ggh4x::facet_grid2(analysis_type ~ mean_trials, switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) + 
+    ggh4x::facetted_pos_scales( 
+      y = list( 
+        `facet_row == 1` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 2` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 3` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 4` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)) 
+      ) 
+    ) +
+    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
     scale_color_manual(values=c("deeppink","purple","olivedrab3","forestgreen","deepskyblue","blue"),name="")+
     theme(axis.title.x = element_text(size=12),
           axis.title.y = element_text(size=12),

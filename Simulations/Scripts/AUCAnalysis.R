@@ -9,8 +9,8 @@ rm(list=ls())
 library(groundhog)
 pkgs <- c("extraDistr","matrixTests", "BSDA", "lme4", "tidyverse", "RColorBrewer",
           "patchwork", "scales", "pROC", "BayesFactor", "gridExtra", "doSNOW", 'parallel',
-          "rjags","dplyr")
-groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.4.1')
+          "rjags","dplyr","ggh4x")
+groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.0')
 
 ## load all results to one dataframe
 fileName=Sys.glob('./Simulations/Output/*.RData')
@@ -94,7 +94,7 @@ generate_AUC_plot <- function(auc_results_df, plot_tests = c('all'), color_tests
     theme_bw() +
     xlab('Participants') +
     ylab('AUC') +
-    facet_grid(analysis_type ~ mean_trials, switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) +
+    facet_grid(analysis_type ~ mean_trials, switch = 'y', scales = "fixed", labeller = labeller(analysis_type = analysisName.labs)) +
     scale_color_manual(values=color_tests,name="")+
     theme(axis.title.x = element_text(size=12),
         axis.title.y = element_text(size=12),
