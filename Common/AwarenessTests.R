@@ -319,8 +319,8 @@ gbf_uninformative_test_f <- function(obs_data, fixed_params) {
     gbf_uninformative_f(obs_data$a_mat[,ind],obs_data$trials_mat[,ind]))
   return(result_test)
 }
-# gbf_uninformative_test_imp <- new(awareness_test_class, test_name="GB_Bayes_Uninformative",
-# run_test = gbf_uninformative_test_f, get_percent_significant=calc_sig_bayes)
+gbf_uninformative_test_imp <- new(awareness_test_class, test_name="GB_Bayes_Uninformative",
+run_test = gbf_uninformative_test_f, get_percent_significant=calc_sig_bayes)
 
 
 ## MMLR test
