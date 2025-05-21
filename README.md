@@ -20,12 +20,13 @@
 ##### How to run the simulations?
 
 1. Open the 'Rproj' file 'GroupLevelObjectivePerformance' in R Studio.
-2. Make sure the library 'groundhog' is installed. This step is important since all packaged used in the simulations project rely on the environment loaded by groundhog.
-2. Navigate to the 'Simulations' folder
-3. Open the script 'Run.R'
-4. Running the script will:
-4.1. Install and load all libraries required by our code using the groudhog library.
-4.2. Source all R scripts needed to run our code.
-4.3. Load the simulations configuration (defined in Common\Definitions.R; see 'fixed_params' parameter and class).
-4.4. Run all simulations according to the simulation configuration.
-4.5. Save the results of the simulations to an RData file, and produce plots for the results.
+2. Make sure Rtools for the relevant R version is installed. This is required for the next step where groundhog will install all required libraries
+3. Make sure the library 'groundhog' is installed. This step is important since all packaged used in the simulations project rely on the environment loaded by groundhog.
+4. Navigate to the 'Simulations' folder
+5. Open the script 'Run.R'
+6. Running the script will:
+6.1. Install and load all libraries required by our code using the groudhog library.
+6.2. Source all R scripts needed to run our code.
+6.3. Load the simulations configuration (defined in Common\Definitions.R; see 'fixed_params' parameter and class).
+6.4. Run all simulations according to the simulation configuration.
+6.5. Save the results of the simulations to an RData file, and produce plots for the results.
