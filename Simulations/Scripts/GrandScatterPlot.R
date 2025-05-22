@@ -1,22 +1,14 @@
 #this script create one plot from all simulation results and saves the plot
 
-## Load required R packages
-library(tidyverse)
-library(wesanderson)
-library(stringr)
-library(dplyr)
-library(gridExtra)
-library(svglite)
-library(RColorBrewer)
-library(scales)
-library(gridExtra)
-library(ggh4x)
-
-## clear workspace
+# Load required R packages and sources
 rm(list=ls())
+library(groundhog)
+pkgs <- c("tidyverse","wesanderson", "stringr", "dplyr", "gridExtra", "svglite",
+          "RColorBrewer", "scales", "gridExtra", "ggh4x")
+groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.0')
 
 ## parameters
-optionImage = 4 
+optionImage = 1 
 #1 = test types: GBC, T, MMLR, GBBayes, TBayes
 #create also a Bayesian image:  GBBayes, TBayes, with H0 for supplementary
 #2 = test types: GBC, GB, Chi
