@@ -102,8 +102,8 @@ chisq_test_imp <- new(awareness_test_class, test_name="Chi",
 # Defines a GB test (test_name = 'GB'), returns a p-values vector
 gb_f <- function(data, trials, chance = 0.5) {
   #calculate average standard deviation across all subjects for the sample
-  p_chance_mat=matrix(chance,nrow=dim(trials)[1],ncol=dim(trials)[2])
-  var_samp=p_chance_mat*(1-p_chance_mat)/trials
+  p_chance_mat=matrix(chance,nrow=dim(trials)[1],ncol=1)
+  var_samp=p_chance_mat*(1-p_chance_mat)/trials[,1]
   var_samp=colMeans(var_samp)
   sigma_samp=sqrt(var_samp)
   res <- z.test(x=data,alternative = "greater", mu=chance, sigma.x=sigma_samp)$p.value
