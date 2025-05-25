@@ -4,13 +4,13 @@ library(ggplot2)
 
 
 # task = 0 for category task and task = 1 for shape task
-get_Hesselman_2016_data <- function(exp = -1, tsk = 0, is_exc = FALSE) {
+get_Hesselmann_2016_data <- function(exp = -1, tsk = 0, is_exc = FALSE) {
   task_str <- ifelse(tsk == 0, "Category","Shape")
   
   # get the data
   expNum = as.numeric(exp)
-  data_awareness <- read.csv("DatasetsReanalysis\\Datasets\\Hesselman_etal_2016\\data\\Hesselmann_2017_-_check1.csv", header = TRUE, sep=";")
-  data_main <- read.csv("DatasetsReanalysis\\Datasets\\Hesselman_etal_2016\\data\\Hesselmann_2017_-_main.csv", header = TRUE, sep=";")
+  data_awareness <- read.csv("DatasetsReanalysis\\Datasets\\Hesselmann_etal_2016\\data\\Hesselmann_2017_-_check1.csv", header = TRUE, sep=";")
+  data_main <- read.csv("DatasetsReanalysis\\Datasets\\Hesselmann_etal_2016\\data\\Hesselmann_2017_-_main.csv", header = TRUE, sep=";")
   
   # rename column name
   colnames(data_awareness)[1] <- 'exp'
@@ -97,9 +97,9 @@ get_Hesselman_2016_data <- function(exp = -1, tsk = 0, is_exc = FALSE) {
 }
 
 
-all_exps_data <- list(get_Hesselman_2016_data(1,0), get_Hesselman_2016_data(2,0),
-                      get_Hesselman_2016_data(2,1))
+all_exps_data <- list(get_Hesselmann_2016_data(1,0), get_Hesselmann_2016_data(2,0),
+                      get_Hesselmann_2016_data(2,1))
 summary_tables <- do.call(rbind, lapply(all_exps_data, function(dat) dat$summary))
 trial_by_trial_tables <- do.call(rbind, lapply(all_exps_data, function(dat) dat$trial_by_trial))
 processed_data <- list(trial_by_trial = trial_by_trial_tables, summary_tables = summary_tables)
-save(processed_data, file = 'DatasetsReanalysis\\Datasets\\Hesselman_etal_2016\\all_Hesselman_etal_2016.RData')
+save(processed_data, file = 'DatasetsReanalysis\\Datasets\\Hesselmann_etal_2016\\all_Hesselmann_etal_2016.RData')

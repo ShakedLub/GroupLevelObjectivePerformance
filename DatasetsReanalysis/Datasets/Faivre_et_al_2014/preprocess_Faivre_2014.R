@@ -4,9 +4,9 @@ library(dplyr)
 library(tidyverse)
 library(data.table)
 
-get_Faivre_data <- function(exp = 0) {
-  expFiles <- dir(paste0('datasets\\Faivre_et_al_2014\\data\\Exp',exp), full.names = T)
-  # read first file, then the rest in a loop
+get_Faivre_data <- function(exp = 0, is_exc = FALSE) {
+  expFiles <- dir(paste0('DatasetsReanalysis\\Datasets\\Faivre_et_al_2014\\data\\Exp',exp), full.names = T)
+  # read all files into a data table
   data <- data.table(do.call(rbind, lapply(expFiles, read.table, header = F)))
   # assign column names
   names(data) <- c('initials','subNum','trialNum','primeCon','primeTargetRelCon',
@@ -27,7 +27,7 @@ get_Faivre_data <- function(exp = 0) {
            objt = ifelse((((tarCon  == 'cong') & (tarResponse == 1)) | 
                             ((tarCon == 'incong') & (tarResponse == 0))),1,0))
   #get unconscious trails + remove 5 first trials (were considered training)
-  #in experiment 2 the auditory prime was masked, 
+  #in experiment 2,5,7 the auditory prime was masked, 
   #in the other experiments the conscious/unconscious split was according to the visual prime
   if(exp %in% c(2,5, 7)) {
     data <- subset(data,auditoryPrimeUnMasked ==0 & trialNum >5)
@@ -39,15 +39,17 @@ get_Faivre_data <- function(exp = 0) {
   if(exp < 5) {
     data <- subset(data, !((tarRT>4000 | tarRT<300)))
   }
-  # summarize the accuracy for every subject for both prime and target congruecy responses
+  # summarize the accuracy for every subject for both prime and target congruency responses
   # find out which of the subjects performed above 65%
-  if(exp == 6) {
-    print(11)
-  }
   summary_visibility <- data %>% 
     group_by(subj, exp) %>% 
     summarise(SR = mean(objp), ntrials = n())
-  over_performers_subs <- getOver65PTAccuracy(summary_visibility)
+  if(is_exc == TRUE) {
+    over_performers_subs <- getOver65PTAccuracy(summary_visibility)
+  } else {
+    over_performers_subs <- c()
+  }
+  
   summary_visibility <- summary_visibility %>%
     filter(!subj %in% over_performers_subs)
   trial_by_trial_data <- data %>% 
@@ -63,22 +65,23 @@ getOver65PTAccuracy <- function(data, threshold = 0.65) {
   high_perf_subjects <- unique(high_perf$subj)
   return (high_perf_subjects)
 }
-
+# we exclude experiments 5 and 7, apart from that get all experiments
 all_exps_data <- list(get_Faivre_data(1), get_Faivre_data(2),
                   get_Faivre_data(3), get_Faivre_data(4), 
-                  get_Faivre_data(6), get_Faivre_data(7), get_Faivre_data(8))
+                  get_Faivre_data(6), get_Faivre_data(8))
 summary_tables <- do.call(rbind, lapply(all_exps_data, function(dat) dat$summary))
 trial_by_trial_tables <- do.call(rbind, lapply(all_exps_data, function(dat) dat$trial_by_trial))
 processed_data <- list(trial_by_trial = trial_by_trial_tables, summary_tables = summary_tables)
-save(processed_data, file = 'datasets\\Faivre_et_al_2014\\Faivre et al._2014.RData')
+save(processed_data, file = 'DatasetsReanalysis\\Datasets\\Faivre_et_al_2014\\all_Faivre et al._2014.RData')
 
 ## validation:
 Table2_all_avg_SR <- summary_tables %>% 
   group_by(exp) %>% 
   summarise(SR = trunc(mean(SR) * 10^3) / 10^3) %>%
-  pull(SR) %>%
-  first()
+  pull(SR)
+Table2_all_avg_SR
 Table2_exp1_avg_SR <- summary_tables %>% 
+  filter(SR < .65) %>%
   group_by(exp) %>% 
   summarise(SR = trunc(mean(SR) * 10^3) / 10^3) %>%
   pull(SR) %>%

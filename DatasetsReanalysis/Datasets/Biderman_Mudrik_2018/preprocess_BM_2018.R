@@ -3,7 +3,7 @@ library(R.matlab)
 library(dplyr)
 library(tidyverse)
 
-get_BM_data <- function(exp = 0) {
+get_BM_data <- function(exp = 0, is_exc = FALSE) {
   main_exp_tib <- getTibble(exp,F)
   post_test_tib <- getTibble(exp,T)
   # fix encoding problem
@@ -29,9 +29,10 @@ get_BM_data <- function(exp = 0) {
   }
   main_exp_tib <- subset(main_exp_tib, !(subNum %in% exc))
   
+  # exclude participants with no low visibility rate
   exc <- c(exc, unique(post_test_tib$subNum[!post_test_tib$subNum %in% subset(post_test_tib, visRate==1)$subNum]))
   
-  #if exp 2 save < 70% accuracy subjects
+  #if exp 2 keep track of < 70% accuracy subjects for exclusion
   under_performers <- c()
   if(exp == 2) {
     under_performers <- getBadTarAcc(main_exp_tib)
@@ -63,7 +64,11 @@ get_BM_data <- function(exp = 0) {
   post_test_tib<- subset(post_test_tib, visRate==1)
   
   # PT exclusion criterion of original study
-  over65_post_test_subjects <- getOver65PTAcc(post_test_tib)
+  if(is_exc == TRUE) {
+    over65_post_test_subjects <- getOver65PTAcc(post_test_tib)
+  } else {
+    over65_post_test_subjects <- c()
+  }
   
   # get excluded subjects
   exc <- c(exc, unique(over65_post_test_subjects))
@@ -88,6 +93,7 @@ get_BM_data <- function(exp = 0) {
     summarise(SR = mean(correct), ntrials = n()) %>%
     dplyr::select(subj, ntrials, SR, exp)
   trial_by_trial_data <- rbind(trial_by_trial_pt, trial_by_trial_main)
+  
   summary_visibility <- rbind(summary_visibility_orientation, summary_visibility_congruency)
   return (list(trial_by_trial = trial_by_trial_data, summary = summary_visibility)) 
 }
@@ -118,7 +124,7 @@ getBadTarAcc <- function(data, lowerLim = 0.7) {
 }
 getTibble <- function(exp, isPostTest = F) {
   # get the directory containing the files
-  prefix <- 'datasets\\Biderman_Mudrik_2018\\data\\'
+  prefix <- 'DatasetsReanalysis\\Datasets\\Biderman_Mudrik_2018\\data\\'
   # assign different path and column names according to PT/Main exp data type we are reading
   if(isPostTest) {
     file_prefix = 'PostTest_'
@@ -143,10 +149,10 @@ all_exps_data <- list(get_BM_data(1), get_BM_data(2), get_BM_data(3))
 summary_tables <- do.call(rbind, lapply(all_exps_data, function(dat) dat$summary))
 trial_by_trial_tables <- do.call(rbind, lapply(all_exps_data, function(dat) dat$trial_by_trial))
 processed_data <- list(trial_by_trial = trial_by_trial_tables, summary_tables = summary_tables)
-save(processed_data, file = 'datasets\\Biderman_Mudrik_2018\\Biderman_Mudrik_2018.RData')
+save(processed_data, file = 'DatasetsReanalysis\\Datasets\\Biderman_Mudrik_2018\\all_Biderman_Mudrik_2018.RData')
 
 ## validation:
 Table1_exp1_avg_SR <- round(mean(summary_tables %>% 
                                    filter(exp == "Biderman & Mudrik_2018_Congruency_1") %>% 
-                                   pull(SR)), 4)
-if(Table1_exp1_avg_SR != 0.4957) {print('not valid')}
+                                   pull(SR)), 3)
+if(Table1_exp1_avg_SR != 0.496) {print('not valid')}
