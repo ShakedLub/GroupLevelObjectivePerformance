@@ -72,7 +72,7 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
             strip.background = element_blank(),
             strip.placement = "outside")
     
-    ggsave('./Output/MisMatchMain.jpg',f1)
+    ggsave('./DatasetsReanalysis/Output/MisMatchMain.jpg',f1)
     
   } else {
     
@@ -92,7 +92,7 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank())
     
-    ggsave('./Output/MisMatchSupp.jpg',f1) 
+    ggsave('./DatasetsReanalysis/Output/MisMatchSupp.jpg',f1) 
     
   }
   
@@ -136,7 +136,7 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
             axis.text = element_text(size=10),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank()) 
-    ggsave('./Output/ASHistNoSig.jpg',f2)
+    ggsave('./DatasetsReanalysis/Output/ASHistNoSig.jpg',f2)
     
     ###### figure 2: datasets with all significant tests
     #filter datasets with all  significant tests in data_per_subj_all
@@ -159,7 +159,7 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
             axis.text = element_text(size=10),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank()) 
-    ggsave('./Output/ASHistSig.jpg',f3)
+    ggsave('./DatasetsReanalysis/Output/ASHistSig.jpg',f3)
     
     ###### figure 3: datasets with tests that don't agree
     
@@ -193,7 +193,7 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
             axis.text = element_text(size=10),
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank())
-    ggsave('./Output/ASHistMisMatch1.jpg',f4)
+    ggsave('./DatasetsReanalysis/Output/ASHistMisMatch1.jpg',f4)
     
     f5=ggplot(not_same_pvaluePlot_F, aes(x=test,y=log.pvalue,fill=test)) +
       geom_bar(alpha=0.5,stat="identity")+
@@ -214,7 +214,7 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank())
     
-    ggsave('./Output/pvalueFreqMisMatch2.jpg',f5)
+    ggsave('./DatasetsReanalysis/Output/pvalueFreqMisMatch2.jpg',f5)
     
     f6=ggplot(not_same_pvaluePlot_B, aes(x=test,y=log.pvalue,fill=test)) +
       geom_bar(alpha=0.5,stat="identity")+
@@ -236,6 +236,6 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
             panel.grid.major = element_blank(),
             panel.grid.minor = element_blank())
     
-    ggsave('./Output/pvalueBayesMisMatch3.jpg',f6)
+    ggsave('./DatasetsReanalysis/Output/pvalueBayesMisMatch3.jpg',f6)
   }  
 }

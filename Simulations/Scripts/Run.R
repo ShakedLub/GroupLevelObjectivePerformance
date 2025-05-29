@@ -52,6 +52,3 @@ stopCluster(sim_cluster)
 save_fn <- paste0('Simulations\\Output\\',paste(paste(analysis_types,collapse = '_'), "sim_data.RData", sep = '_'))
 save(all_results, sim_conditions_table, fixed_params, file=save_fn)
 
-############################    Plot results    ################################ 
-source("./Simulations/Scripts/GrandScatterPlot.R")
-

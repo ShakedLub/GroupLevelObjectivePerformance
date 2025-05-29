@@ -8,7 +8,7 @@ pkgs <- c("tidyverse","wesanderson", "stringr", "dplyr", "gridExtra", "svglite",
 groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.0')
 
 ## parameters
-optionImage = 1 
+optionImage = 4 
 #1 = test types: GBC, T, MMLR, GBBayes, TBayes
 #create also a Bayesian image:  GBBayes, TBayes, with H0 for supplementary
 #2 = test types: GBC, GB, Chi
