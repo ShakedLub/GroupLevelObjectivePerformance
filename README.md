@@ -23,7 +23,7 @@
 3.5. LoadDataSets - this function loads all datasets to one dataframe
 3.6. PlottingFunctions - this function generates all plots for the datasets reanalysis   
 3.7. PreprocessResultsForPlots - this function preprocesses the data of awareness tests calculated for all datasets, to prepare it for plotting.
-3.8. There is one script for each paper (named based on author names and publication year) that extracts data from this paper's folder in 'Datasets' folder, and saves it as an RData file in the 'Data' folder.
+3.8. There is one script for each paper (named based on the authors names and publication year) that extracts data from this paper's folder in 'Datasets' folder, and saves it as an RData file in the 'Data' folder. 
 
 ##### How to run the simulations?
 
