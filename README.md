@@ -1,6 +1,6 @@
 # GroupLevelObjectivePerformance
 
-The preprint can be found at: https://osf.io/preprints/psyarxiv/b967v\_v1
+The preprint can be found at: https://osf.io/preprints/psyarxiv/b967v_v1
 
 # Simulations code readme
 
