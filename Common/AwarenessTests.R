@@ -100,13 +100,13 @@ chisq_test_imp <- new(awareness_test_class, test_name="Chi",
                        run_test = chisq_test_f)
 ## GB test
 # Defines a GB test (test_name = 'GB'), returns a p-values vector
-gb_f <- function(data, trials, chance = 0.5) {
+gb_f <- function(data, trials, chance = 0.5, tail = 'greater') {
   #calculate average standard deviation across all subjects for the sample
   p_chance_mat=matrix(chance,nrow=dim(trials)[1],ncol=1)
   var_samp=p_chance_mat*(1-p_chance_mat)/trials[,1]
   var_samp=colMeans(var_samp)
   sigma_samp=sqrt(var_samp)
-  res <- z.test(x=data,alternative = "greater", mu=chance, sigma.x=sigma_samp)$p.value
+  res <- BSDA::z.test(x=data,alternative = tail, mu=chance, sigma.x=sigma_samp)$p.value
   return(res)
 }
 gb_test_f <- function(obs_data, fixed_params) {
@@ -121,18 +121,27 @@ gb_test_imp <- new(awareness_test_class, test_name="GB",
 
 ## GB or Chi test (GBC)
 # Defines a GB or Chi test (test_name = 'GBC'), returns a p-values vector
-gbc_f <- function(data_as, trials, chance = 0.5) {
+gbc_f <- function(data_as, trials, chance = 0.5, tail = 'greater') {
   data_a <- data_as * trials
   #run chi square test for each iteration
   result_test_chi= chisq_f(data.frame(data_a), data.frame(trials))
   #run GB test for each iteration
-  result_test_gb = gb_f(data.frame(data_as), data.frame(trials), chance)
+  result_test_gb = gb_f(data.frame(data_as), data.frame(trials), chance, tail = tail)
   #get minimal pvalue between the two tests
   res = pmin(result_test_chi,result_test_gb)
   # we correct for two comparisons so multiple p-value by 2 before
   # comparing with alpha
   res = res * 2
-  return(res)
+  
+  if (res > 1) {
+    warning(paste0("Note that the corrected p-value is higher than 1 (", res,
+                   "), and hence was set to 1"))
+    # correct p-value result by clipping at 1 (p-value may exceed 1 due to the
+    # multiple comparisons correction)
+    res <- min(c(1,res))
+  }
+  
+  return(as.numeric(res))
 }
 gbc_test_f <- function(obs_data, fixed_params) {
   result_test <- sapply(1:fixed_params@n_iterations, function(ind)
@@ -311,7 +320,7 @@ GB_UNINF_MODEL <- "model {
   }"
 gbf_uninformative_f <- function(data, trials, chance = 0.5) {
   res <- generate_GB_UNINF_BF(data,trials)$BF
-  return(res)  
+  return(res)
 }
 gbf_uninformative_test_f <- function(obs_data, fixed_params) {
   # result_test <- GB_UNINF_MODEL
@@ -333,7 +342,7 @@ MMLR_f <- function(data, trials, chance = 0.5) {
   is_correct <- unlist(lapply(1:length(data), function(subj_ind)
     c(rep(1,data[subj_ind]), rep(0,trials[subj_ind]-data[subj_ind]))))
   subject_id <- rep(1:length(data), trials)
-  iter_data <- data.frame(subject_id = factor(subject_id), 
+  iter_data <- data.frame(subject_id = factor(subject_id),
                           is_correct = is_correct)
   # fit a logistic mixed model predicting correctness at the group-level
   MMLR<-glmer(is_correct ~1+(1|subject_id),data=iter_data,family=binomial)
@@ -351,7 +360,7 @@ MMLR_test_f <- function(obs_data, fixed_params) {
   result_test <- sapply(1:ncol(obs_data$as_mat), function(iter)
     get_iter_result(trials_mat = obs_data$trials_mat[,iter],
                     a_mat = obs_data$a_mat[,iter]))
-  
+
   return(result_test)
 }
 MMLR_test_imp <- new(awareness_test_class, test_name="MMLR", run_test=MMLR_test_f)
@@ -488,5 +497,14 @@ RCOrAVRC_f <- function(ObAS_exp,data_per_subj_full,ThresholdObjTest,alpha,param)
   # we correct for two comparisons so multiple p-value by 2 before
   # comparing with alpha
   res = res * 2
-  return(res)
+  
+  if (res > 1) {
+    warning(paste0("Note that the corrected p-value is higher than 1 (", res,
+                   "), and hence was set to 1"))
+    # correct p-value result by clipping at 1 (p-value may exceed 1 due to the
+    # multiple comparisons correction)
+    res <- min(c(1,res))
+  }
+  
+  return(as.numeric(res))
 }

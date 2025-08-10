@@ -3,9 +3,9 @@ function [h,pval]=GBC(R,N,chance,alpha,tail)
 	%Preprint: https://osf.io/preprints/psyarxiv/b967v_v1
 
 	%input
-	%R: number of correct reponses for each participant
-	%N: number of trials for each particiapnt
-	%chance: chance prefomance of task
+	%R: number of correct responses for each participant
+	%N: number of trials for each participant
+	%chance: chance performance of task
 	%alpha: alpha of statistical test 
     %tail: type of alternative hypothesis to evaluate 'both', 'right',
     %'left'

@@ -54,7 +54,7 @@ The preprint can be found at: https://osf.io/preprints/psyarxiv/b967v_v1
 4. Navigate to the 'DatasetsReanalysis' folder
 5. Open the script 'Run.R'
 6. Running the script will:
-   6.1. Install and load all libraries required by our code using the groudhog library.
+   6.1. Install and load all libraries required by our code using the groundhog library.
    6.2. Source all R scripts needed to run our code.
    6.3. Define parameters used in the analysis. The analysis can be run with objective aware participants (incSubjObjTest=1) and without (incSubjObjTest=0)
    6.4. Load all datasets to one dataframe
@@ -63,5 +63,11 @@ The preprint can be found at: https://osf.io/preprints/psyarxiv/b967v_v1
 
 ##### MATLAB implementation of the GBC test
 
-GBC.m - An implementation of the GBC test as a function for Matlab. It is located in the root folder.
+GBC.m - An implementation of the GBC test as a function for MATLAB. It is located in the root folder.
 
+##### R implementation of the GBC and GB-Bayes tests
+
+GBC.R - A standalone implementation of the GBC test as a function.
+GBBayes.m - A standalone implementation of the GB-Bayes test as a function.
+
+Both implementations can be found in the root folder.
