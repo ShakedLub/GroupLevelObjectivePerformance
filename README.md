@@ -67,7 +67,7 @@ GBC.m - An implementation of the GBC test as a function for MATLAB. It is locate
 
 ##### R implementation of the GBC and GB-Bayes tests
 
-GBC.R - A standalone implementation of the GBC test as a function.
+GBC.R - A standalone implementation of the GBC test as a function (note the prerequisites - JAGS and AwarenessTests.R)
 GBBayes.m - A standalone implementation of the GB-Bayes test as a function.
 
 Both implementations can be found in the root folder.

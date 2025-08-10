@@ -1,6 +1,7 @@
 ## GBC test implementation
 
-# Note that you must source the AwarenessTests.R script for the function to run
+# Note that JAGS must be installed as a prerequisite.
+# Also, note that you must source the AwarenessTests.R script for the function to run
 source(file.path('Common', 'AwarenessTests.R'))
 if (!require(BSDA)) {
   stop("Package 'rjags' is required but not installed.")
