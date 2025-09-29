@@ -8,7 +8,7 @@ The preprint can be found at: https://osf.io/preprints/psyarxiv/b967v_v1
 
 1. Common - includes the R scripts used by both the simulations and datasets reanalysis codes:
    1.1. Awareness Tests - includes the implementation of all awareness tests used in our study, including the proposed ones.
-   1.2. Definitions - the common definitions used either across simulations and datasets reanalysis codes or are general data structes used across different scripts.
+   1.2. Definitions - the common definitions used either across simulations and datasets reanalysis codes or are general data structures used across different scripts.
 2. Simulations - includes all scripts used to run the simulations in our study:
    2.1. Analysis Types - includes an implementation of all tested scenarios.
    2.2. AUCAnalysis - analyzed the area under the curve (AUC) analysis reported in the paper regarding the overall sensitivity of each test to awareness in the given tested scenarios.
@@ -29,7 +29,7 @@ The preprint can be found at: https://osf.io/preprints/psyarxiv/b967v_v1
 
 1. Open the 'Rproj' file 'GroupLevelObjectivePerformance' in R Studio.
 2. Make sure Rtools for the relevant R version is installed. This is required for the next step where groundhog will install all required libraries
-3. Make sure the library 'groundhog' is installed. This step is important since all packaged used in the simulations project rely on the environment loaded by groundhog.
+3. Make sure the library 'groundhog' is installed. This step is important since all packages used in the simulations project rely on the environment loaded by groundhog.
 4. Navigate to the 'Simulations' folder
 5. Open the script 'Run.R'
 6. Running the script will:
@@ -38,7 +38,7 @@ The preprint can be found at: https://osf.io/preprints/psyarxiv/b967v_v1
    6.3. Load the simulations configuration (defined in Common\\Definitions.R; see 'fixed\_params' parameter and class).
    6.4. Run all simulations according to the simulation configuration.
    6.5. Save the results of the simulations to an RData file.
-   6.6 In order to produce plots for the results run 'GrandScatterPlot.R'. Chose which plots to produce with the variable optionImage.
+   6.6 In order to produce plots for the results run 'GrandScatterPlot.R'. Choose which plots to produce with the variable optionImage.
    optionImage=1 - test types: GBC, T, MMLR, GBBayes, TBayes
    create also a Bayesian image:  GBBayes, TBayes, with H0 for supplementary
    optionImage=2 - test types: GBC, GB, Chi
@@ -50,13 +50,13 @@ The preprint can be found at: https://osf.io/preprints/psyarxiv/b967v_v1
 
 1. Open the 'Rproj' file 'GroupLevelObjectivePerformance' in R Studio.
 2. Make sure Rtools for the relevant R version is installed. This is required for the next step where groundhog will install all required libraries
-3. Make sure the library 'groundhog' is installed. This step is important since all packaged used in the datset relanalysis project rely on the environment loaded by groundhog.
+3. Make sure the library 'groundhog' is installed. This step is important since all packages used in the datset relanalysis project rely on the environment loaded by groundhog.
 4. Navigate to the 'DatasetsReanalysis' folder
 5. Open the script 'Run.R'
 6. Running the script will:
    6.1. Install and load all libraries required by our code using the groundhog library.
    6.2. Source all R scripts needed to run our code.
-   6.3. Define parameters used in the analysis. The analysis can be run with objective aware participants (incSubjObjTest=1) and without (incSubjObjTest=0)
+   6.3. Define parameters used in the analysis. The analysis can be run with objectively aware participants (incSubjObjTest=1) and without (incSubjObjTest=0)
    6.4. Load all datasets to one dataframe
    6.5. Compare all test's statistics to the ones reported in the manuscript and run all tests for each dataset.
    6.5. Produce plots for the results.
@@ -68,6 +68,7 @@ GBC.m - An implementation of the GBC test as a function for MATLAB. It is locate
 ##### R implementation of the GBC and GB-Bayes tests
 
 GBC.R - A standalone implementation of the GBC test as a function (note the prerequisites - JAGS and AwarenessTests.R)
+
 GBBayes.m - A standalone implementation of the GB-Bayes test as a function.
 
 Both implementations can be found in the root folder.
