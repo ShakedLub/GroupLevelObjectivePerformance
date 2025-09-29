@@ -4,10 +4,10 @@
 # Also, note that you must source the AwarenessTests.R script for the function to run
 source(file.path('Common', 'AwarenessTests.R'))
 if (!require(BSDA)) {
-  stop("Package 'rjags' is required but not installed.")
+  stop("Package 'BSDA' is required but not installed.")
 }
 if (!require(dplyr)) {
-  stop("Package 'rjags' is required but not installed.")
+  stop("Package 'dplyr' is required but not installed.")
 }
 
 # Implemented by: Shaked Lublinsky and Itay Yaron
