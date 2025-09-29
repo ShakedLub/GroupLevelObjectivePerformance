@@ -6,7 +6,7 @@ if (!require(rjags)) {
   stop("Package 'rjags' is required but not installed.")
 }
 if (!require(dplyr)) {
-  stop("Package 'rjags' is required but not installed.")
+  stop("Package 'dplyr' is required but not installed.")
 }
 
 # Implemented by: Shaked Lublinsky and Itay Yaron
