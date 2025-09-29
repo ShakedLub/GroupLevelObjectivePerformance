@@ -16,7 +16,7 @@ GBC <- function(R,N,chance = 0.5,alpha = 0.05, tail = 'right') {
   # Input
   # R: number of correct responses for each participant
   # N: number of trials for each participant
-  # chance: chance perfomance of task
+  # chance: chance performance of the task
   # alpha: alpha of statistical test 
   # tail: type of alternative hypothesis to evaluate 'both', 'right',
   # 'left'
