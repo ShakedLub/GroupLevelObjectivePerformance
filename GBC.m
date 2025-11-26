@@ -68,6 +68,11 @@ function [h,pval]=GBC(R,N,chance,alpha,tail)
 	%comparing with alpha
 	pval=pval*2;
 
+	if pval > 1
+    	warning('Note that the corrected p-value is higher than 1 (%.4f), and hence was set to 1', res);
+		pval = min(pval, 1);
+	end
+
 	if pval <= alpha
 		h=1;
 	else
