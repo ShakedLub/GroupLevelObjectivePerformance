@@ -1,6 +1,8 @@
 ## GBBayes test implementation
 
-# Note that you must source the AwarenessTests.R script for the function to run
+# Note that JAGS must be installed as a prerequisite.
+# Note that you must source the TestingInfrastructure.R and AwarenessTests.R scripts for the function to run
+source(file.path('Common', 'TestingInfrastructure.R'))
 source(file.path('Common', 'AwarenessTests.R'))
 if (!require(rjags)) {
   stop("Package 'rjags' is required but not installed.")

@@ -2,51 +2,13 @@
 # the script includes implementations of all awareness tests and the rules
 # governing significance for frequentist and Bayesian tests
 
-#########################    Significance Rules   ########################## 
-# The functions define significance for given test results
-
-# For Bayesian tests, use the fixed parameter of BF threshold
-calc_sig_bayes <- function(result_test, fixed_params) {
-  H1_res <- result_test > fixed_params@BF_threshold
-  H0_res <- result_test < 1/fixed_params@BF_threshold
-  return(list(H1 = H1_res, H0 = H0_res))
-}
-# For frequntist tests, use the fixed parameter of alpha
-calc_sig_freq <- function(result_test, fixed_params) {
-  H1_res <- result_test < fixed_params@alpha
-  H0_res <- rep(NA, length(result_test))
-  return(list(H1 = H1_res, H0 = H0_res))
-}
-
-#####################     Awareness Tests CLASS     ####################### 
-# Define the awareness test class: the class which defines an awareness test.
-# To add a new test, add an instance of the  'awareness_test_class' object 
-# implementing the test (see below 'run_test' function) and significance 
-# rule (see below 'get_percent_significant' function).
-awareness_test_class <- 'awareness_test_type'
-# Class fields
-# test_name - a label for the test (e.g, 'Chi').
-# run_test - a function implementing the statistical test, getting the observed
-# data (a list with matrices of the #trials (trials_mat), %correct (as_mat), 
-# and #correct (a_mat) per participant) and fixed parameters (see Definitions.R)
-# as input, and returning the a vector of the results for all iterations.
-# get_percent_significant - a function that returns significance according to the
-# test (differs between frequentist tests and Bayesian ones)
-setClass(awareness_test_class, slots=list(test_name="character",
-                                          run_test = "function",
-                                          get_percent_significant = "function"),
-         prototype = list(get_percent_significant = calc_sig_freq))
-
-## We define an X_imp instance of the awareness test class to define a specific
-# implementation of an awareness test
-
 ## T-test
 # Defines a one tailed t-test (test_name = 'T'), returns p-values vector
 t_f <- function(data, trials, chance = 0.5) {
   res <- col_t_onesample(data,alternative="greater",
                                  null=chance)$pvalue
   return(res)
-} 
+}
 t_test_f <- function(obs_data, fixed_params) {
   # we run multiple tests at once, returning results for all iterations
   result_test <- t_f(data = obs_data$as_mat,chance = fixed_params@chance_as)
@@ -59,7 +21,7 @@ t_test_imp <- new(awareness_test_class, test_name="T", run_test=t_test_f)
 tbayes_f <- function(data, trials, chance = 0.5) {
   res <- exp(ttestBF(x=data,mu=chance)@bayesFactor$bf)
   return(res)
-} 
+}
 tbayes_test_f <- function(obs_data, fixed_params) {
   # run the test for each iteration
   result_test <- sapply(1:fixed_params@n_iterations, function(ind)
@@ -78,26 +40,27 @@ chisq_f <- function(data, trials, chance = 0.5) {
   failures_mat <- trials - data
   # Expected number of success / failures = number of trials / 2
   expected_mat <- trials / 2
-  
+
   # Compute observed chi-squared X2 = sum((A - E)^2 / E) + sum((F - E)^2/E),
   # where A indicates number of correct awareness responses, E indicates the
   # expected number of correct responses under the null hyptohesis (50%), and
   # F indicates the number of incorrect responses
   X2 <- colSums((data - expected_mat)^2 / expected_mat) +
     colSums((failures_mat - expected_mat)^2 / expected_mat)
-  
+
   ## Under H0, X2 ~ chisq(k), where k = number of participants
   # get the p-value for each iteration
   res <- 1 - pchisq(X2, df = nrow(data))
-  
+
   return(res)
-} 
+}
 chisq_test_f <- function(obs_data, fixed_params) {
   test_result <- chisq_f(obs_data$a_mat,obs_data$trials_mat)
   return(test_result)
 }
 chisq_test_imp <- new(awareness_test_class, test_name="Chi",
-                       run_test = chisq_test_f)
+run_test = chisq_test_f)
+
 ## GB test
 # Defines a GB test (test_name = 'GB'), returns a p-values vector
 gb_f <- function(data, trials, chance = 0.5, tail = 'greater') {
@@ -112,7 +75,7 @@ gb_f <- function(data, trials, chance = 0.5, tail = 'greater') {
 gb_test_f <- function(obs_data, fixed_params) {
   # run a z.test according to the sigma_samp and observed results in each iteration
   result_test <- sapply(1:fixed_params@n_iterations, function(ind)
-    gb_f(data = obs_data$as_mat[,ind], 
+    gb_f(data = obs_data$as_mat[,ind],
                trials = obs_data$trials_mat, fixed_params@chance_as))
     return(result_test)
 }
@@ -132,7 +95,7 @@ gbc_f <- function(data_as, trials, chance = 0.5, tail = 'greater') {
   # we correct for two comparisons so multiple p-value by 2 before
   # comparing with alpha
   res = res * 2
-  
+
   if (res > 1) {
     warning(paste0("Note that the corrected p-value is higher than 1 (", res,
                    "), and hence was set to 1"))
@@ -140,12 +103,12 @@ gbc_f <- function(data_as, trials, chance = 0.5, tail = 'greater') {
     # multiple comparisons correction)
     res <- min(c(1,res))
   }
-  
+
   return(as.numeric(res))
 }
 gbc_test_f <- function(obs_data, fixed_params) {
   result_test <- sapply(1:fixed_params@n_iterations, function(ind)
-    gbc_f(data_as = obs_data$as_mat[,ind], 
+    gbc_f(data_as = obs_data$as_mat[,ind],
                trials = obs_data$trials_mat[,ind], fixed_params@chance_as))
   return(result_test)
 }
@@ -186,7 +149,7 @@ generate_GB_BF <- function(accuracy, n_trials, chance_level = .5,
   return(list(mcmc_samples = mcmc_samples, BF = BF_10))
 }
 
-
+# 
 # The model
 GB_MODEL <- "model {
     # M parameter, with an uniformative prior,
@@ -416,28 +379,28 @@ golbalnull_test_imp <- new(awareness_test_class, test_name="GlobalNull", run_tes
 
 ################## RC and AVRC resampling criterion tests ############################
 resampling_criterion_test_f<- function (ObAS_exp,data_per_subj_full,ThresholdObjTest,alpha,param,TestType) {
-  
+
   #Add excluded subjects to ObAS nTrials
   nTrials=data_per_subj_full$ntrials
-  
+
   #number of subjects with objective aware subjects
   numSubj=length(nTrials)
-  
+
   #create number of trials vec
   nT=rep(t(nTrials),times=param$NiterationsResmapling)
   nTMat=matrix(nT,nrow=numSubj,ncol=param$NiterationsResmapling)
-  
+
   #Draw from a binomial distribution the success rate for all resampling iterations
   r=rbinom(param$NiterationsResmapling*numSubj,nT,param$ChanceSuccessRate)
   rMat=matrix(r,nrow=numSubj,ncol=param$NiterationsResmapling)
-  
+
   #Calculate AS for all resampling iterations
   ObAS=r/nT;
   ObASMat=matrix(ObAS,nrow=numSubj,ncol=param$NiterationsResmapling)
-  
+
   ## Exclude subjects according to observed AS
   if (!is.na(ThresholdObjTest)) {
-    
+
     if (identical(ThresholdObjTest,"Chance")) {
       pbinomEachSubj=1-pbinom(q=r,size=nT,prob=param$ChanceSuccessRate)
       excSubj=pbinomEachSubj<alpha
@@ -447,42 +410,42 @@ resampling_criterion_test_f<- function (ObAS_exp,data_per_subj_full,ThresholdObj
       excSubj=ObAS>0.6
     }
     excSubjMat=matrix(excSubj,nrow=numSubj,ncol=param$NiterationsResmapling)
-    
+
     ObAS[excSubj==TRUE]=NA
     ObASMat=matrix(ObAS,nrow=numSubj,ncol=param$NiterationsResmapling)
-    
+
     nSubjAfterEx=colSums(!excSubjMat)
-    
+
     #delete samples with less than 10 subjects left because statistical tests can't be run on them
     itDel=which(nSubjAfterEx<param$minSampleSubjRCT)
-    
+
     if (length(itDel) != 0) {
-      
+
       ObASMat=ObASMat[,-itDel]
       ObAS=matrix(ObASMat,nrow=1,ncol=dim(ObASMat)[1]*dim(ObASMat)[2])
-      
+
       param$NiterationsResmapling=dim(ObASMat)[2]
     }
   }
-  
+
   #flip ObAS mat
   if (identical(TestType,"AVRC")) {
     ObASMat=param$ChanceSuccessRate+abs(param$ChanceSuccessRate-ObASMat)
   }
-  
+
   #Calculate mean AS for each resampling iteration
   mObAS=colMeans(ObASMat,na.rm = TRUE)
-  
+
   #flip real result
   if (identical(TestType,"AVRC")) {
     ObAS_exp=param$ChanceSuccessRate+abs(param$ChanceSuccessRate-ObAS_exp)
   }
-  
+
   #calculate mean ObAS_exp for the real result
   mObAS_exp=mean(ObAS_exp)
   # corrected p-value (Phipson & Smyth 2010)
   p=(1 + sum(mObAS>mObAS_exp))/(1 + param$NiterationsResmapling)
-  
+
   return(p)
 }
 
@@ -497,7 +460,7 @@ RCOrAVRC_f <- function(ObAS_exp,data_per_subj_full,ThresholdObjTest,alpha,param)
   # we correct for two comparisons so multiple p-value by 2 before
   # comparing with alpha
   res = res * 2
-  
+
   if (res > 1) {
     warning(paste0("Note that the corrected p-value is higher than 1 (", res,
                    "), and hence was set to 1"))
@@ -505,6 +468,6 @@ RCOrAVRC_f <- function(ObAS_exp,data_per_subj_full,ThresholdObjTest,alpha,param)
     # multiple comparisons correction)
     res <- min(c(1,res))
   }
-  
+
   return(as.numeric(res))
 }

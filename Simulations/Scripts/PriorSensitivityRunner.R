@@ -1,5 +1,5 @@
-# This simulation tests group level awareness using the different approaches
-# and tests as detailed in the paper
+# This simulation tests prior sensitivity for GBBayes to examine group level awareness using the prior settings
+# as detailed in the SM Chapter 4
 
 # Load required R packages and sources
 rm(list=ls())
@@ -9,7 +9,7 @@ pkgs <- c("extraDistr","matrixTests", "BSDA", "lme4", "tidyverse", "RColorBrewer
           "rjags","dplyr")
 groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.1')
 source("./Common/TestingInfrastructure.R")
-source("./Common/AwarenessTests.R") 
+source("./Simulations/Scripts/PriorSensitivityAwarenessTests.R") 
 source("./Common/Definitions.R")
 source("./Simulations/Scripts/AnalysisTypes.R")
 source("./Simulations/Scripts/Simulation.R")
@@ -17,29 +17,19 @@ source("./Simulations/Scripts/Simulation.R")
 # Configuration: define the simulation configuration (see AnalysisTypes.R)
 analysis_types <- c('Mixed', 'Small_spread', 'Large_spread', 'Unaware')
 
-# to run the SM analysis with low number of trials configuration change to FALSE:
-is_main_analysis_run <- FALSE
-if(is_main_analysis_run) {
-  # Initialize a data frame in which each combination of parameters comprise a 'condition'
-  # that will be simulated and tested for group-level awareness:
-  sim_conditions_table <- create_sim_conditions_table(analysis_types, fixed_params)
-} else {
-  ## VALIDATION ANALYSIS: low number of trials
-  # exclude non low ntrials SM tests 
-  SM_low_ntrials_fixed_params@test <- 
-    SM_low_ntrials_fixed_params@test[!SM_low_ntrials_fixed_params@test %in%
-                                       c("GB_Bayes_Uninformative", "GlobalNull")]
-  sim_conditions_table <- create_sim_conditions_table(analysis_types, SM_low_ntrials_fixed_params)
-}
+# For prior the sensitivity analysis we use less iterations
+fixed_params@n_iterations <- SM_prior_sensitivity_iterations
 
+# Initialize a data frame in which each combination of parameters comprise a 'condition'
+# that will be simulated and tested for group-level awareness:
+sim_conditions_table <- create_sim_conditions_table(analysis_types, fixed_params)
 
 ############################    Simulation    ################################ 
 # set up a cluster for running simulation conditions in parallel 
 sim_cluster <- makeCluster(detectCores() -1, outfile="") 
 parallel::clusterExport(sim_cluster, 
-                        c("chisq_f", "gb_f", "gbc_f", "generate_GB_BF", "GB_MODEL",
-                          "t_f","gbf_f", "MMLR_f", "tbayes_f", "gbf_uninformative_f", 
-                          "generate_GB_UNINF_BF", "GB_UNINF_MODEL"))
+                        c("generate_GB_BF", "GB_MODEL",
+                          "prior_sensitivity_gbf_f"))
 registerDoSNOW(sim_cluster)
 # define a progress bar to track progress of the simulation
 progress_bar <- txtProgressBar(max = nrow(sim_conditions_table), style = 3)
@@ -62,9 +52,6 @@ close(progress_bar)
 stopCluster(sim_cluster)
 
 ############################    Save results    ################################ 
-if (is_main_analysis_run) {
-  save_fn <- paste0('Simulations\\Output\\',paste(paste(analysis_types,collapse = '_'), "sim_data.RData", sep = '_'))
-} else {
-  save_fn <- paste0('Simulations\\Output\\',paste(paste(analysis_types,collapse = '_'), "SM_low_ntrials_sim_data.RData", sep = '_'))
-}
+save_fn <- paste0('Simulations\\Output\\',paste(paste(analysis_types,collapse = '_'), "prior_sensitivity_sim_data.RData", sep = '_'))
 save(all_results, sim_conditions_table, fixed_params, file=save_fn)
+

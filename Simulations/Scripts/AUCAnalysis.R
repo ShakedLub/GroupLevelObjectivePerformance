@@ -10,13 +10,14 @@ library(groundhog)
 pkgs <- c("extraDistr","matrixTests", "BSDA", "lme4", "tidyverse", "RColorBrewer",
           "patchwork", "scales", "pROC", "BayesFactor", "gridExtra", "doSNOW", 'parallel',
           "rjags","dplyr","ggh4x")
-groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.0')
+groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.1')
 
 ## load all results to one dataframe
-fileName=Sys.glob('./Simulations/Output/*.RData')
+filename=Sys.glob('./Simulations/Output/Mixed_Small_spread_Large_spread_Unaware_sim_data.RData')
+filename_SM_low_n=Sys.glob('./Simulations/Output/Mixed_Small_spread_Large_spread_Unaware_SM_low_ntrials_sim_data.RData')
 
 # load results
-load(fileName)
+load(filename)
 
 # the function gets all of the simulation results and returns
 # a data frame of all "power" conditions, with an additional 'AUC' column
@@ -127,11 +128,14 @@ color_global_null_tests <- c("red","darkturquoise")
 bayesian_tests <- c("GBBayes","GB_Bayes_Uninformative","TBayes")
 color_bayesian_tests <- c("purple","forestgreen","blue")
 
+
 #calculate AUC
 all_tests_AUCs <- get_AUC_per_cond(all_results)
 
 # change order of statistical tests 
-all_tests_AUCs$test=factor(all_tests_AUCs$test,levels=c("GBC","T","MMLR","GBBayes","GB_Bayes_Uninformative","TBayes","GB","Chi","GlobalNull"))
+all_tests_AUCs$test=factor(all_tests_AUCs$test,levels=c("GBC","T","MMLR","GBBayes","GB_Bayes_Uninformative","TBayes","GB","Chi","GlobalNull",
+                                                        "'Theta_Wide'~sigma", "'Theta_Both'", "'Theta_High'~mu",
+                                                        "'Sigma_Wide'~sigma", "'Sigma_Both'", "'Sigma_High'~mu"))
 
 #create plots
 plt_main_AUCs <- generate_AUC_plot(all_tests_AUCs, main_tests, color_main_tests)
@@ -139,6 +143,6 @@ plt_GN_AUCs <- generate_AUC_plot(all_tests_AUCs, global_null_tests, color_global
 plt_bayes_AUCs <- generate_AUC_plot(all_tests_AUCs, bayesian_tests, color_bayesian_tests)
 
 #save plots
-ggsave('./Simulations/Output/mainAUC.jpg',plt_main_AUCs)
-ggsave('./Simulations/Output/GNAUC.jpg',plt_GN_AUCs)
-ggsave('./Simulations/Output/bayesAUC.jpg',plt_bayes_AUCs)
+ggsave('./Simulations/Output/mainAUC.png',plt_main_AUCs, dpi = 300)
+ggsave('./Simulations/Output/GNAUC.png',plt_GN_AUCs, dpi = 300)
+ggsave('./Simulations/Output/bayesAUC.png',plt_bayes_AUCs, dpi = 300)

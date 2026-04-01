@@ -2,38 +2,56 @@
 
 # Load required R packages and sources
 rm(list=ls())
+source("./Common/TestingInfrastructure.R")
+source("./Common/Definitions.R")
+
 library(groundhog)
 pkgs <- c("tidyverse","wesanderson", "stringr", "dplyr", "gridExtra", "svglite",
           "RColorBrewer", "scales", "gridExtra", "ggh4x")
-groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.0')
+groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.1')
 
 ## parameters
-optionImage = 4 
+optionImage = 1
 #1 = test types: GBC, T, MMLR, GBBayes, TBayes
 #create also a Bayesian image:  GBBayes, TBayes, with H0 for supplementary
 #2 = test types: GBC, GB, Chi
 #3 = GBC, GlobalNull
 #4 = GBBayes, TBayes, GB_Bayes_Uninformative
+#5 = prior sensitvity plot: GBBayes, alternative prior settings
 
+# to create the SM plot with low number of trials configuration change to FALSE:
 ## load all results to one dataframe
-fileName=Sys.glob('./Simulations/Output/*.RData')
+is_main_analysis_plot <- FALSE
+if(is_main_analysis_plot) {
+  filename=Sys.glob('./Simulations/Output/Mixed_Small_spread_Large_spread_Unaware_sim_data.RData')
+} else {
+  filename=Sys.glob('./Simulations/Output/Mixed_Small_spread_Large_spread_Unaware_SM_low_ntrials_sim_data.RData')
+}
 
-#load results
-load(fileName)
 
-#delete all_results field (data for AUC)
-all_results=select(all_results,-all_results)
+## Organize data function
+get_results_df <- function(fn) {
+  #load results
+  load(fn)
+  
+  #delete all_results field (data for AUC)
+  all_results=select(all_results,-all_results)
+  
+  #change number of subjects to be a factor
+  all_results$n_participants=as.factor(all_results$n_participants)
+  
+  #change sig_perc to percent
+  all_results$sig_perc=all_results$sig_perc*100
+  all_results$null_perc=all_results$null_perc*100
+  
+  # Update test names
+  all_results$test=recode_factor(all_results$test, GB_Bayes="GBBayes")
+  
+  return(all_results)
+}
 
-## Organize data
-#change number of subjects to be a factor
-all_results$n_participants=as.factor(all_results$n_participants)
-
-#change sig_perc to percent
-all_results$sig_perc=all_results$sig_perc*100
-all_results$null_perc=all_results$null_perc*100
-
-# Update test names
-all_results$test=recode_factor(all_results$test, GB_Bayes="GBBayes")
+# load the results into a dataframe
+all_results <- get_results_df(filename)
 
 #include only the statistical tests wanted
 if (optionImage==1) {
@@ -44,6 +62,9 @@ if (optionImage==1) {
   all_results=filter(all_results, test == "GBC" | test == "GlobalNull")
 }  else if (optionImage==4) {
   all_results=filter(all_results, test == "GBBayes" | test == "GB_Bayes_Uninformative" | test == "TBayes")
+} else if(optionImage==5) {
+  # all_results=filter(all_results, test == "GBBayes")
+  all_results=filter(all_results, test == "GBBayes" | test == "TBayes")
 }
 
 #calculate CI for alpha=0.05 based on the number of iterations
@@ -68,11 +89,11 @@ if (optionImage==1) {
   all_results_F=filter(all_results, test == "GBC" | test == "T" | test == "MMLR")
 } else if (optionImage==2 | optionImage==3)  {
   all_results_F=all_results
-} else if (optionImage==4)  {
+} else if (optionImage==4 | optionImage==5)  {
   all_results_B=all_results
 }
 
-if (optionImage==1 | optionImage==4) {
+if (optionImage==1 | optionImage==4 | optionImage==5) {
   #Create in Bayesian data H0 result and H1 result
   #H1
   all_results_B0=all_results_B
@@ -143,9 +164,11 @@ if (optionImage==1) {
           legend.title = element_text(size=12),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
-  
-  ggsave('./Simulations/Output/SimulationsResultsMain.jpg',f1)
-
+  if(is_main_analysis_plot) {
+    ggsave('./Simulations/Output/SimulationsResultsMain.png',f1, dpi = 300)
+  } else {
+    ggsave('./Simulations/Output/SM_Low_n_SimulationsResultsMain.png',f1, dpi = 300)
+  } 
   #Bayesian plot for supplementary with H0
   f2=ggplot(all_results_B_Supp, aes(x = n_participants, y = sig_perc, group=test, color=test)) +
     geom_line(alpha=0.4)+
@@ -177,8 +200,11 @@ if (optionImage==1) {
           legend.title = element_text(size=12),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
-
-  ggsave('./Simulations/Output/SimulationsBayesResultsSupp.jpg',f2)
+  if(is_main_analysis_plot) {
+    ggsave('./Simulations/Output/SimulationsBayesResultsSupp.png',f2, dpi = 300)
+  } else {
+    ggsave('./Simulations/Output/SM_Low_n_SimulationsBayesResultsSupp.png',f2, dpi = 300)
+  } 
   
 } else if (optionImage==2) {
   
@@ -213,7 +239,7 @@ if (optionImage==1) {
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
   
-  ggsave('./Simulations/Output/SimulationsFreqResultSupp.jpg',f1)
+  ggsave('./Simulations/Output/SimulationsFreqResultSupp.png',f1, dpi = 300)
   
 } else if (optionImage==3) {
   
@@ -248,11 +274,10 @@ if (optionImage==1) {
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
   
-  ggsave('./Simulations/Output/SimulationsGlobalNullSupp.jpg',f1)
+  ggsave('./Simulations/Output/SimulationsGlobalNullSupp.png',f1, dpi = 300)
   
 } else if (optionImage==4) {
   
-  #Bayesian plot for supplementary with H0
   f1=ggplot(all_results_B_Supp, aes(x = n_participants, y = sig_perc, group=test, color=test)) +
     geom_line(alpha=0.4)+
     geom_point(size=2,alpha=0.4)+
@@ -284,5 +309,125 @@ if (optionImage==1) {
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
   
-  ggsave('./Simulations/Output/SimulationsBayesUninformativeSupp.jpg',f1)
+  ggsave('./Simulations/Output/SimulationsBayesUninformativeSupp.png',f1, dpi = 300)
+} else if (optionImage==5) {
+  fn_ps <- './Simulations/Output/Mixed_Small_spread_Large_spread_Unaware_prior_sensitivity_sim_data.RData'
+  ps_results <- get_results_df(fn_ps)
+  # recode test names
+  test_labels_map <- c(
+    "GBBayes H0" = "GBBayes~H0",
+    "GBBayes H1" = "GBBayes~H1",
+    "TBayes H0" = "TBayes~H0",
+    "TBayes H1" = "TBayes~H1",
+    "ps_1_1_GB_Bayes H0" = "'Wide'~sigma~H0",
+    "ps_1_1_GB_Bayes H1" = "'Wide'~sigma~H1",
+    "ps_1_2_GB_Bayes H0" = "'Both'~~H0",
+    "ps_1_2_GB_Bayes H1" = "'Both'~~H1",
+    "ps_1_3_GB_Bayes H0" = "'High'~mu~H0",
+    "ps_1_3_GB_Bayes H1" = "'High'~mu~H1",
+    "ps_2_1_GB_Bayes H0" = "'Wide'~sigma~H0",
+    "ps_2_1_GB_Bayes H1" = "'Wide'~sigma~H1",
+    "ps_2_2_GB_Bayes H0" = "'Both'~~H0",
+    "ps_2_2_GB_Bayes H1" = "'Both'~~H1",
+    "ps_2_3_GB_Bayes H0" = "'High'~mu~H0",
+    "ps_2_3_GB_Bayes H1" = "'High'~mu~H1"
+  )
+  
+  
+  # set results to plot Bayesian threshold outcomes for H0 and H1 separetly
+  ps_results_B0 <- ps_results
+  ps_results_B1=ps_results
+
+  ps_results_B0$sig_perc=ps_results$null_perc
+  ps_results_B0$test <- paste(ps_results_B0$test, "H0")
+  
+  ps_results_B1$test <- paste(ps_results_B1$test, "H1")
+  # all_results_B for supplementary plot
+  ps_B_Supp=rbind(all_results_B_Supp, ps_results_B0,ps_results_B1)
+  
+  # split to theta and sigma prior sensitivity plots
+  theta_prior_sensitivity_tests <- c('GBBayes', 'TBayes' ,'ps_1_1_GB_Bayes', 'ps_1_2_GB_Bayes', 'ps_1_3_GB_Bayes')
+  sigma_prior_sensitivity_tests <- c('GBBayes', 'TBayes' ,'ps_2_1_GB_Bayes', 'ps_2_2_GB_Bayes', 'ps_2_3_GB_Bayes')
+  theta_ps_B_Supp <- ps_B_Supp %>% 
+    filter(str_detect(test, paste0("^(", paste(theta_prior_sensitivity_tests, collapse = "|"), ")")))
+  theta_ps_B_Supp$test <- 
+    factor(theta_ps_B_Supp$test, 
+           levels = c('GBBayes H0', 'GBBayes H1', 'TBayes H0', 'TBayes H1', 'ps_1_1_GB_Bayes H0','ps_1_1_GB_Bayes H1',
+                      'ps_1_3_GB_Bayes H0', 'ps_1_3_GB_Bayes H1', 'ps_1_2_GB_Bayes H0','ps_1_2_GB_Bayes H1'))
+  sigma_ps_B_Supp <- ps_B_Supp %>% 
+    filter(str_detect(test, paste0("^(", paste(sigma_prior_sensitivity_tests, collapse = "|"), ")")))
+  sigma_ps_B_Supp$test <- 
+    factor(sigma_ps_B_Supp$test, 
+           levels = c('GBBayes H0', 'GBBayes H1', 'TBayes H0', 'TBayes H1', 'ps_2_1_GB_Bayes H0','ps_2_1_GB_Bayes H1',
+                      'ps_2_3_GB_Bayes H0', 'ps_2_3_GB_Bayes H1','ps_2_2_GB_Bayes H0','ps_2_2_GB_Bayes H1'))
+  
+  f1=ggplot(theta_ps_B_Supp, aes(x = n_participants, y = sig_perc, group=test, color=test)) +
+    geom_line(alpha=0.4)+
+    geom_point(size=2,alpha=0.4)+
+    theme_bw() + 
+    xlab('Participants') +
+    ylab('% Significant') +
+    ggh4x::facet_grid2(analysis_type ~ mean_trials, switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) + 
+    ggh4x::facetted_pos_scales( 
+      y = list( 
+        `facet_row == 1` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 2` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 3` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 4` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)) 
+      ) 
+    ) +
+    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
+    scale_color_manual(values=c("deeppink","purple", "deepskyblue","blue", "olivedrab3","forestgreen","burlywood","burlywood4", "khaki","darkorange3"),
+                       labels = function(x) parse(text = test_labels_map[x]),
+                       name="")+
+    theme(axis.title.x = element_text(size=12),
+          axis.title.y = element_text(size=12),
+          axis.text.x = element_text(size=12),
+          axis.text.y = element_text(size=12),
+          strip.text.x = element_text(size=12),
+          strip.text.y = element_text(size=12),
+          legend.position = "bottom",
+          legend.text = element_text(size=12),
+          legend.title = element_text(size=12),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank())
+  
+  ggsave('./Simulations/Output/SimulationsBayesThetaPriorSensitivitySupp.png',f1, dpi = 300)
+
+  f2=ggplot(sigma_ps_B_Supp, aes(x = n_participants, y = sig_perc, group=test, color=test)) +
+    geom_line(alpha=0.4)+
+    geom_point(size=2,alpha=0.4)+
+    theme_bw() + 
+    xlab('Participants') +
+    ylab('% Significant') +
+    ggh4x::facet_grid2(analysis_type ~ mean_trials, switch = 'y', scales = "free", labeller = labeller(analysis_type = analysisName.labs)) + 
+    ggh4x::facetted_pos_scales( 
+      y = list( 
+        `facet_row == 1` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 2` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 3` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)), 
+        `facet_row == 4` = scale_y_continuous(limits = c(0, 100), breaks = c(25,50,75,100)) 
+      ) 
+    ) +
+    geom_hline(data = data_hline1,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline2,aes(yintercept = hline), linetype="dashed", color = "black") +
+    geom_hline(data = data_hline3,aes(yintercept = hline), linetype="dashed", color = "gray") +
+    scale_color_manual(values=c("deeppink","purple", "deepskyblue","blue", "olivedrab3","forestgreen","burlywood","burlywood4", "khaki","darkorange3"),
+                       labels = function(x) parse(text = test_labels_map[x]),
+                       name="")+
+    theme(axis.title.x = element_text(size=12),
+          axis.title.y = element_text(size=12),
+          axis.text.x = element_text(size=12),
+          axis.text.y = element_text(size=12),
+          strip.text.x = element_text(size=12),
+          strip.text.y = element_text(size=12),
+          legend.position = "bottom",
+          legend.text = element_text(size=12),
+          legend.title = element_text(size=12),
+          panel.grid.major = element_blank(),
+          panel.grid.minor = element_blank())
+  ggsave('./Simulations/Output/SimulationsBayesSigmaPriorSensitivitySupp.png',f2, dpi = 300)
+  
 }

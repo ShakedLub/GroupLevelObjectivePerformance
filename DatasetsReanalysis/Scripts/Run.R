@@ -9,6 +9,7 @@ pkgs <- c("BSDA", "lme4", "dplyr", "readxl", "rlang",
 groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.0')
 
 #Getting the functions
+source("./Common/TestingInfrastructure.R")
 source("./Common/AwarenessTests.R") 
 source("./Common/Definitions.R") 
 source("./DatasetsReanalysis/Scripts/CheckAwareness.R")
