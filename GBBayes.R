@@ -17,7 +17,8 @@ GBBayes <- function(R,N,chance = 0.5,BF_threshold = 3,
                     AS_low_bound = .5,
                     theta_mu_prior = .55, theta_sig_prior = .1,
                     sigma_mu_prior = .025, sigma_sig_prior = .05,
-                    n_chains = 2, burining_period = 1500, iterations_per_chain = 5000) {
+                    n_chains = 2, burining_period = 1500, iterations_per_chain = 5000,
+                    base_seed = 777) {
   # Input
   # R: number of correct responses for each participant
   # N: number of trials for each participant
@@ -31,6 +32,7 @@ GBBayes <- function(R,N,chance = 0.5,BF_threshold = 3,
   # n_chains: number of chains used in BF estimation
   # burning_period: burning period for BF estimation
   # iterations_per_chain: number of chains to use for estimating BF
+  # base_seed: the base seed to use - the index of each chain (1/2..) will be added to this argument and used as seed 
   
   # Output
   # list including:
@@ -53,6 +55,7 @@ GBBayes <- function(R,N,chance = 0.5,BF_threshold = 3,
   validate_input_vec(N, 'N')
   
   # run test
+  seed <- 1999
   BF <- generate_GB_BF(accuracy = R, n_trials = N, chance_level = chance,
                        low_bound = AS_low_bound,
                        theta_mu_prior = theta_mu_prior, 
@@ -61,7 +64,8 @@ GBBayes <- function(R,N,chance = 0.5,BF_threshold = 3,
                        sigma_sig_prior = sigma_sig_prior,
                        n_chains = n_chains, 
                        burining_period = burining_period, 
-                       iterations_per_chain = iterations_per_chain)
+                       iterations_per_chain = iterations_per_chain,
+                       base_seed = base_seed)
   BF <- BF$BF
   # hypothesis testing
   h <- ifelse(BF > BF_threshold, 1, ifelse(BF < 1/BF_threshold, -1, 0))

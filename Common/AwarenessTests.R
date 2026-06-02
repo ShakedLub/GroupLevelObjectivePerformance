@@ -6,7 +6,7 @@
 # Defines a one tailed t-test (test_name = 'T'), returns p-values vector
 t_f <- function(data, trials, chance = 0.5) {
   res <- col_t_onesample(data,alternative="greater",
-                                 null=chance)$pvalue
+                         null=chance)$pvalue
   return(res)
 }
 t_test_f <- function(obs_data, fixed_params) {
@@ -40,18 +40,18 @@ chisq_f <- function(data, trials, chance = 0.5) {
   failures_mat <- trials - data
   # Expected number of success / failures = number of trials / 2
   expected_mat <- trials / 2
-
+  
   # Compute observed chi-squared X2 = sum((A - E)^2 / E) + sum((F - E)^2/E),
   # where A indicates number of correct awareness responses, E indicates the
   # expected number of correct responses under the null hyptohesis (50%), and
   # F indicates the number of incorrect responses
   X2 <- colSums((data - expected_mat)^2 / expected_mat) +
     colSums((failures_mat - expected_mat)^2 / expected_mat)
-
+  
   ## Under H0, X2 ~ chisq(k), where k = number of participants
   # get the p-value for each iteration
   res <- 1 - pchisq(X2, df = nrow(data))
-
+  
   return(res)
 }
 chisq_test_f <- function(obs_data, fixed_params) {
@@ -59,7 +59,7 @@ chisq_test_f <- function(obs_data, fixed_params) {
   return(test_result)
 }
 chisq_test_imp <- new(awareness_test_class, test_name="Chi",
-run_test = chisq_test_f)
+                      run_test = chisq_test_f)
 
 ## GB test
 # Defines a GB test (test_name = 'GB'), returns a p-values vector
@@ -76,8 +76,8 @@ gb_test_f <- function(obs_data, fixed_params) {
   # run a z.test according to the sigma_samp and observed results in each iteration
   result_test <- sapply(1:fixed_params@n_iterations, function(ind)
     gb_f(data = obs_data$as_mat[,ind],
-               trials = obs_data$trials_mat, fixed_params@chance_as))
-    return(result_test)
+         trials = obs_data$trials_mat, fixed_params@chance_as))
+  return(result_test)
 }
 gb_test_imp <- new(awareness_test_class, test_name="GB",
                    run_test = gb_test_f)
@@ -95,7 +95,7 @@ gbc_f <- function(data_as, trials, chance = 0.5, tail = 'greater') {
   # we correct for two comparisons so multiple p-value by 2 before
   # comparing with alpha
   res = res * 2
-
+  
   if (res > 1) {
     warning(paste0("Note that the corrected p-value is higher than 1 (", res,
                    "), and hence was set to 1"))
@@ -103,17 +103,17 @@ gbc_f <- function(data_as, trials, chance = 0.5, tail = 'greater') {
     # multiple comparisons correction)
     res <- min(c(1,res))
   }
-
+  
   return(as.numeric(res))
 }
 gbc_test_f <- function(obs_data, fixed_params) {
   result_test <- sapply(1:fixed_params@n_iterations, function(ind)
     gbc_f(data_as = obs_data$as_mat[,ind],
-               trials = obs_data$trials_mat[,ind], fixed_params@chance_as))
+          trials = obs_data$trials_mat[,ind], fixed_params@chance_as))
   return(result_test)
 }
 gbc_test_imp <- new(awareness_test_class, test_name="GBC",
-                        run_test = gbc_test_f, get_percent_significant=calc_sig_freq)
+                    run_test = gbc_test_f, get_percent_significant=calc_sig_freq)
 
 # GBF test
 # Defines a GBF test (test_name = 'GB_Bayes'), returns a BF vector
@@ -122,7 +122,8 @@ generate_GB_BF <- function(accuracy, n_trials, chance_level = .5,
                            low_bound = .5,
                            theta_mu_prior = .55, theta_sig_prior = .1,
                            sigma_mu_prior = .025, sigma_sig_prior = .05,
-                           n_chains = 2, burining_period = 1500, iterations_per_chain = 5000) {
+                           n_chains = 2, burining_period = 1500, iterations_per_chain = 5000,
+                           base_seed = 777) {
   # group together all parameters feeding the model
   model_data <- list(a = accuracy, n_t = n_trials, chance_p = chance_level,
                      theta_low_bound = low_bound,
@@ -130,14 +131,17 @@ generate_GB_BF <- function(accuracy, n_trials, chance_level = .5,
                      theta_sig_prior = theta_sig_prior,
                      sigma_mu_prior = sigma_mu_prior,
                      sigma_sig_prior = sigma_sig_prior)
+  
+  init_rnd_seed <- function(chain) { list(.RNG.name = "base::Mersenne-Twister", .RNG.seed = base_seed + chain)}
+  
   # the parameters to monitor
   monitored_params <-c("M", "delta", "theta")
   # create the model
-  model <- jags.model( textConnection(GB_MODEL), model_data, n.chains = n_chains)
+  model <- jags.model( textConnection(GB_MODEL), model_data, inits = init_rnd_seed, n.chains = n_chains)
   # burn the first samples for MCMC
   update(model, burining_period)
   # generate mcmc samples
-  mcmc_samples <- coda.samples(model, monitored_params,  n.iter=iterations_per_chain)
+  mcmc_samples <- coda.samples(model, monitored_params, n.iter=iterations_per_chain)
   # calculate the posterior probability for H1 relying on the 'M' parameter that
   # arbitrates between H0 and H1 (average across all chains and iterations)
   probability_H1 <- do.call(rbind.data.frame, mcmc_samples) %>%
@@ -218,14 +222,17 @@ generate_GB_UNINF_BF <- function(accuracy, n_trials, chance_level = .5,
                                  low_bound = 0,
                                  n_chains = 2,
                                  burining_period = 15000,
-                                 iterations_per_chain = 30000) {
+                                 iterations_per_chain = 30000,
+                                 base_seed = 777) {
   # group together all parameters feeding the model
   model_data <- list(a = accuracy, n_t = n_trials, chance_p = chance_level,
                      theta_low_bound = low_bound)
+  
+  init_rnd_seed <- function(chain) { list(.RNG.name = "base::Mersenne-Twister", .RNG.seed = base_seed + chain)}
   # the parameters to monitor
   monitored_params <-c("M", "delta", "theta")
   # create the model
-  model <- jags.model( textConnection(GB_UNINF_MODEL), model_data, n.chains = n_chains)
+  model <- jags.model( textConnection(GB_UNINF_MODEL), model_data, inits = init_rnd_seed, n.chains = n_chains)
   # burn the first samples for MCMC
   update(model, burining_period)
   # generate mcmc samples
@@ -292,7 +299,7 @@ gbf_uninformative_test_f <- function(obs_data, fixed_params) {
   return(result_test)
 }
 gbf_uninformative_test_imp <- new(awareness_test_class, test_name="GB_Bayes_Uninformative",
-run_test = gbf_uninformative_test_f, get_percent_significant=calc_sig_bayes)
+                                  run_test = gbf_uninformative_test_f, get_percent_significant=calc_sig_bayes)
 
 
 ## MMLR test
@@ -323,7 +330,7 @@ MMLR_test_f <- function(obs_data, fixed_params) {
   result_test <- sapply(1:ncol(obs_data$as_mat), function(iter)
     get_iter_result(trials_mat = obs_data$trials_mat[,iter],
                     a_mat = obs_data$a_mat[,iter]))
-
+  
   return(result_test)
 }
 MMLR_test_imp <- new(awareness_test_class, test_name="MMLR", run_test=MMLR_test_f)
@@ -341,7 +348,7 @@ golbalnull_test_f <- function(obs_data, fixed_params) {
   n_trials <- trials_mat[1,1]
   # get the density and cumulative density for a binomial distribution at chance
   cdBinom <- pbinom(0:n_trials, n_trials, .5)
-
+  
   # we use a two-sided test, so we need to add the cumsum on both ends
   sig_low <- head(which(cdBinom > fixed_params@alpha/2),1) - 1
   sig_high <- tail(which(cdBinom[sig_low] + (1-cdBinom) > fixed_params@alpha),1) + 1
@@ -349,7 +356,7 @@ golbalnull_test_f <- function(obs_data, fixed_params) {
   sig_S_low <- sig_low - 1
   sig_S_high <- sig_high - 1
   exp_fpr <- cdBinom[sig_low] + (1 - cdBinom[sig_high])
-
+  
   # the function returns the p-value for the global null test
   gn_test_iter <- function(S, N) {
     # get p.value according to a binomial test for each participant,
@@ -357,8 +364,8 @@ golbalnull_test_f <- function(obs_data, fixed_params) {
     per_ind_p <- sapply(1:length(S), function(ind_p)
       # decide on significance according to the rejection zone
       (S[ind_p] <= sig_S_low) | (S[ind_p] > sig_S_high)
-      )
-
+    )
+    
     # extract number of significant participants (sig_ps) and number of participants (N_ps)
     sig_ps <- sum(per_ind_p)
     N_ps <- length(per_ind_p)
@@ -370,7 +377,7 @@ golbalnull_test_f <- function(obs_data, fixed_params) {
   # run the global null (gn) test for each iteration
   result_test <- sapply(1:fixed_params@n_iterations, function(ind)
     gn_test_iter(a_mat[,ind], trials_mat[,ind]))
-
+  
   return(result_test)
 }
 golbalnull_test_imp <- new(awareness_test_class, test_name="GlobalNull", run_test=golbalnull_test_f)
@@ -379,28 +386,28 @@ golbalnull_test_imp <- new(awareness_test_class, test_name="GlobalNull", run_tes
 
 ################## RC and AVRC resampling criterion tests ############################
 resampling_criterion_test_f<- function (ObAS_exp,data_per_subj_full,ThresholdObjTest,alpha,param,TestType) {
-
+  
   #Add excluded subjects to ObAS nTrials
   nTrials=data_per_subj_full$ntrials
-
+  
   #number of subjects with objective aware subjects
   numSubj=length(nTrials)
-
+  
   #create number of trials vec
   nT=rep(t(nTrials),times=param$NiterationsResmapling)
   nTMat=matrix(nT,nrow=numSubj,ncol=param$NiterationsResmapling)
-
+  
   #Draw from a binomial distribution the success rate for all resampling iterations
   r=rbinom(param$NiterationsResmapling*numSubj,nT,param$ChanceSuccessRate)
   rMat=matrix(r,nrow=numSubj,ncol=param$NiterationsResmapling)
-
+  
   #Calculate AS for all resampling iterations
   ObAS=r/nT;
   ObASMat=matrix(ObAS,nrow=numSubj,ncol=param$NiterationsResmapling)
-
+  
   ## Exclude subjects according to observed AS
   if (!is.na(ThresholdObjTest)) {
-
+    
     if (identical(ThresholdObjTest,"Chance")) {
       pbinomEachSubj=1-pbinom(q=r,size=nT,prob=param$ChanceSuccessRate)
       excSubj=pbinomEachSubj<alpha
@@ -410,42 +417,42 @@ resampling_criterion_test_f<- function (ObAS_exp,data_per_subj_full,ThresholdObj
       excSubj=ObAS>0.6
     }
     excSubjMat=matrix(excSubj,nrow=numSubj,ncol=param$NiterationsResmapling)
-
+    
     ObAS[excSubj==TRUE]=NA
     ObASMat=matrix(ObAS,nrow=numSubj,ncol=param$NiterationsResmapling)
-
+    
     nSubjAfterEx=colSums(!excSubjMat)
-
+    
     #delete samples with less than 10 subjects left because statistical tests can't be run on them
     itDel=which(nSubjAfterEx<param$minSampleSubjRCT)
-
+    
     if (length(itDel) != 0) {
-
+      
       ObASMat=ObASMat[,-itDel]
       ObAS=matrix(ObASMat,nrow=1,ncol=dim(ObASMat)[1]*dim(ObASMat)[2])
-
+      
       param$NiterationsResmapling=dim(ObASMat)[2]
     }
   }
-
+  
   #flip ObAS mat
   if (identical(TestType,"AVRC")) {
     ObASMat=param$ChanceSuccessRate+abs(param$ChanceSuccessRate-ObASMat)
   }
-
+  
   #Calculate mean AS for each resampling iteration
   mObAS=colMeans(ObASMat,na.rm = TRUE)
-
+  
   #flip real result
   if (identical(TestType,"AVRC")) {
     ObAS_exp=param$ChanceSuccessRate+abs(param$ChanceSuccessRate-ObAS_exp)
   }
-
+  
   #calculate mean ObAS_exp for the real result
   mObAS_exp=mean(ObAS_exp)
   # corrected p-value (Phipson & Smyth 2010)
   p=(1 + sum(mObAS>mObAS_exp))/(1 + param$NiterationsResmapling)
-
+  
   return(p)
 }
 
@@ -460,7 +467,7 @@ RCOrAVRC_f <- function(ObAS_exp,data_per_subj_full,ThresholdObjTest,alpha,param)
   # we correct for two comparisons so multiple p-value by 2 before
   # comparing with alpha
   res = res * 2
-
+  
   if (res > 1) {
     warning(paste0("Note that the corrected p-value is higher than 1 (", res,
                    "), and hence was set to 1"))
@@ -468,6 +475,6 @@ RCOrAVRC_f <- function(ObAS_exp,data_per_subj_full,ThresholdObjTest,alpha,param)
     # multiple comparisons correction)
     res <- min(c(1,res))
   }
-
+  
   return(as.numeric(res))
 }
