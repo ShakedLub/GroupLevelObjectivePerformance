@@ -20,7 +20,7 @@ source("./DatasetsReanalysis/Scripts/ValidateDataset.R")
 source("./DatasetsReanalysis/Scripts/PreprocessResultsForPlots.R")
 
 #set random number generator
-set.seed(1)
+set.seed(777)
 
 #################### Parameters
 incSubjObjTest=0 #1: main analysis- include objective aware subjects
