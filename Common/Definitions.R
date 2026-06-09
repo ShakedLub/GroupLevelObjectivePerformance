@@ -77,18 +77,5 @@ fixed_params <- new(fixed_params_class,
                     trials_lim = c(10,10000),
                     BF_threshold = 3)
 
-# simulating low number of trials as a supplementary materials analysis
-SM_low_ntrials_fixed_params <- new(fixed_params_class, 
-                    test = all_awareness_test_names,
-                    chance_as = 0.5,
-                    prop_sd_trials= 0,
-                    n_participants = c(10,20,30,50),
-                    mean_trials = c(25, 50, 75),
-                    n_iterations = 2,
-                    # n_iterations = 10^4,
-                    alpha = 0.05,
-                    trials_lim = c(10,10000),
-                    BF_threshold = 3)
-
 # define a lower number of iterations for the prior sensitivity analysis
 SM_prior_sensitivity_iterations <- 10^3

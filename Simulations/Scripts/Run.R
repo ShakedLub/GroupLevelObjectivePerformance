@@ -18,20 +18,9 @@ source("./Simulations/Scripts/Simulation.R")
 analysis_types <- c('Mixed', 'Small_spread', 'Large_spread', 'Unaware')
 
 # to run the SM analysis with low number of trials configuration change to FALSE:
-is_main_analysis_run <- FALSE
-if(is_main_analysis_run) {
-  # Initialize a data frame in which each combination of parameters comprise a 'condition'
-  # that will be simulated and tested for group-level awareness:
-  sim_conditions_table <- create_sim_conditions_table(analysis_types, fixed_params)
-} else {
-  ## VALIDATION ANALYSIS: low number of trials
-  # exclude non low ntrials SM tests 
-  SM_low_ntrials_fixed_params@test <- 
-    SM_low_ntrials_fixed_params@test[!SM_low_ntrials_fixed_params@test %in%
-                                       c("GB_Bayes_Uninformative", "GlobalNull")]
-  sim_conditions_table <- create_sim_conditions_table(analysis_types, SM_low_ntrials_fixed_params)
-}
-
+# Initialize a data frame in which each combination of parameters comprise a 'condition'
+# that will be simulated and tested for group-level awareness:
+sim_conditions_table <- create_sim_conditions_table(analysis_types, fixed_params)
 
 ############################    Simulation    ################################ 
 # set up a cluster for running simulation conditions in parallel 
@@ -62,9 +51,6 @@ close(progress_bar)
 stopCluster(sim_cluster)
 
 ############################    Save results    ################################ 
-if (is_main_analysis_run) {
-  save_fn <- paste0('Simulations\\Output\\',paste(paste(analysis_types,collapse = '_'), "sim_data.RData", sep = '_'))
-} else {
-  save_fn <- paste0('Simulations\\Output\\',paste(paste(analysis_types,collapse = '_'), "SM_low_ntrials_sim_data.RData", sep = '_'))
-}
+save_fn <- paste0('Simulations\\Output\\',paste(paste(analysis_types,collapse = '_'), "sim_data.RData", sep = '_'))
+
 save(all_results, sim_conditions_table, fixed_params, file=save_fn)

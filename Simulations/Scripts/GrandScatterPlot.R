@@ -11,7 +11,7 @@ pkgs <- c("tidyverse","wesanderson", "stringr", "dplyr", "gridExtra", "svglite",
 groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.1')
 
 ## parameters
-optionImage = 1
+optionImage = 5
 #1 = test types: GBC, T, MMLR, GBBayes, TBayes
 #create also a Bayesian image:  GBBayes, TBayes, with H0 for supplementary
 #2 = test types: GBC, GB, Chi
@@ -21,13 +21,7 @@ optionImage = 1
 
 # to create the SM plot with low number of trials configuration change to FALSE:
 ## load all results to one dataframe
-is_main_analysis_plot <- FALSE
-if(is_main_analysis_plot) {
-  filename=Sys.glob('./Simulations/Output/Mixed_Small_spread_Large_spread_Unaware_sim_data.RData')
-} else {
-  filename=Sys.glob('./Simulations/Output/Mixed_Small_spread_Large_spread_Unaware_SM_low_ntrials_sim_data.RData')
-}
-
+filename=Sys.glob('./Simulations/Output/Mixed_Small_spread_Large_spread_Unaware_sim_data.RData')
 
 ## Organize data function
 get_results_df <- function(fn) {
@@ -164,11 +158,7 @@ if (optionImage==1) {
           legend.title = element_text(size=12),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
-  if(is_main_analysis_plot) {
-    ggsave('./Simulations/Output/SimulationsResultsMain.png',f1, dpi = 300)
-  } else {
-    ggsave('./Simulations/Output/SM_Low_n_SimulationsResultsMain.png',f1, dpi = 300)
-  } 
+  ggsave('./Simulations/Output/SimulationsResultsMain.png',f1, dpi = 300)
   #Bayesian plot for supplementary with H0
   f2=ggplot(all_results_B_Supp, aes(x = n_participants, y = sig_perc, group=test, color=test)) +
     geom_line(alpha=0.4)+
@@ -200,12 +190,8 @@ if (optionImage==1) {
           legend.title = element_text(size=12),
           panel.grid.major = element_blank(),
           panel.grid.minor = element_blank())
-  if(is_main_analysis_plot) {
-    ggsave('./Simulations/Output/SimulationsBayesResultsSupp.png',f2, dpi = 300)
-  } else {
-    ggsave('./Simulations/Output/SM_Low_n_SimulationsBayesResultsSupp.png',f2, dpi = 300)
-  } 
-  
+  ggsave('./Simulations/Output/SimulationsBayesResultsSupp.png',f2, dpi = 300)
+
 } else if (optionImage==2) {
   
   f1=ggplot(all_results_F, aes(x = n_participants, y = sig_perc, group=test, color=test)) +
