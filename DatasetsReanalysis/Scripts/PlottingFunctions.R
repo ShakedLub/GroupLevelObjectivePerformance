@@ -123,7 +123,7 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
     all_not_sig$dataset = gsub('_',' ',all_not_sig$dataset)
     
     f2=ggplot(all_not_sig, aes(x=AS)) +
-      geom_histogram(aes(y = stat(density)*0.02) ,binwidth = 0.02, fill="darkturquoise") +
+      geom_histogram(aes(y = after_stat(density)*0.02) ,binwidth = 0.02, fill="darkturquoise") +
       theme_bw() + 
       geom_vline(xintercept = param$ChanceSuccessRate, linetype="dashed", color = "gray") +
       scale_y_continuous(labels = percent)+
@@ -146,7 +146,7 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
     all_sig$dataset = gsub('_',' ',all_sig$dataset)
     
     f3=ggplot(all_sig, aes(x=AS)) +
-      geom_histogram(aes(y = stat(density)*0.02) ,binwidth = 0.02, fill="deeppink3") +
+      geom_histogram(aes(y = after_stat(density)*0.02) ,binwidth = 0.02, fill="deeppink3") +
       theme_bw() + 
       geom_vline(xintercept = param$ChanceSuccessRate, linetype="dashed", color = "gray") +
       scale_y_continuous(labels = percent)+
@@ -180,7 +180,7 @@ GenerateAllPlots <- function(param, results_preprocessed, results_preprocessed_l
     not_same_ASPlot$dataset = gsub('_',' ',not_same_ASPlot$dataset)
     
     f4= ggplot(not_same_ASPlot, aes(x=AS)) +
-      geom_histogram(aes(y = stat(density)*0.02),binwidth = 0.02, fill="steelblue3") +
+      geom_histogram(aes(y = after_stat(density)*0.02),binwidth = 0.02, fill="steelblue3") +
       theme_bw() +
       geom_vline(xintercept = param$ChanceSuccessRate, linetype="dashed", color = "gray") +
       scale_y_continuous(labels = percent)+
