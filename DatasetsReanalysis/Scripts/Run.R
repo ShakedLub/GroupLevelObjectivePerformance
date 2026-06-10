@@ -23,7 +23,7 @@ source("./DatasetsReanalysis/Scripts/PreprocessResultsForPlots.R")
 set.seed(777)
 
 #################### Parameters
-incSubjObjTest=0 #1: main analysis- include objective aware subjects
+incSubjObjTest=1 #1: main analysis- include objective aware subjects
                  #0: exclude objective aware subjects (with RC and AVRC tests)
 param<-list("ChanceSuccessRate" = 0.5,
             "NiterationsResmapling" = 10000,

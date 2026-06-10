@@ -7,7 +7,7 @@ library(groundhog)
 pkgs <- c("extraDistr","matrixTests", "BSDA", "lme4", "tidyverse", "RColorBrewer",
           "patchwork", "scales", "pROC", "BayesFactor", "gridExtra", "doSNOW", 'parallel',
           "rjags","dplyr")
-groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.1')
+groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.0')
 source("./Common/TestingInfrastructure.R")
 source("./Common/AwarenessTests.R") 
 source("./Common/Definitions.R")
@@ -25,9 +25,9 @@ sim_conditions_table <- create_sim_conditions_table(analysis_types, fixed_params
 ############################    Simulation    ################################ 
 # set up a cluster for running simulation conditions in parallel 
 sim_cluster <- makeCluster(detectCores() -1, outfile="") 
-parallel::clusterExport(sim_cluster, 
+parallel::clusterExport(sim_cluster,
                         c("chisq_f", "gb_f", "gbc_f", "generate_GB_BF", "GB_MODEL",
-                          "t_f","gbf_f", "MMLR_f", "tbayes_f", "gbf_uninformative_f", 
+                          "t_f","gbf_f", "MMLR_f", "tbayes_f", "gbf_uninformative_f",
                           "generate_GB_UNINF_BF", "GB_UNINF_MODEL"))
 registerDoSNOW(sim_cluster)
 # define a progress bar to track progress of the simulation
