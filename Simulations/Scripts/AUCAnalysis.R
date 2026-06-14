@@ -10,7 +10,7 @@ library(groundhog)
 pkgs <- c("extraDistr","matrixTests", "BSDA", "lme4", "tidyverse", "RColorBrewer",
           "patchwork", "scales", "pROC", "BayesFactor", "gridExtra", "doSNOW", 'parallel',
           "rjags","dplyr","ggh4x")
-groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.0')
+groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.1')
 
 ## load all results to one dataframe
 filename=Sys.glob('./Simulations/Output/Mixed_Small_spread_Large_spread_Unaware_sim_data.RData')

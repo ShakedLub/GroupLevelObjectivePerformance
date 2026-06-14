@@ -7,7 +7,7 @@ library(groundhog)
 pkgs <- c("extraDistr","matrixTests", "BSDA", "lme4", "tidyverse", "RColorBrewer",
           "patchwork", "scales", "pROC", "BayesFactor", "gridExtra", "doSNOW", 'parallel',
           "rjags","dplyr")
-groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.0')
+groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.1')
 source("./Common/TestingInfrastructure.R")
 source("./Common/AwarenessTests.R") 
 source("./Common/Definitions.R")
