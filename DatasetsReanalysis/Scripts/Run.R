@@ -6,7 +6,7 @@ pkgs <- c("BSDA", "lme4", "dplyr", "readxl", "rlang",
           "tidyr", "stringr", "ggplot2", "BayesFactor", "wesanderson",
           "gridExtra", 'matrixTests', 'svglite',
           "rjags","scales")
-groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.0')
+groundhog.library(pkgs, "2025-03-01", tolerate.R.version = '4.5.1')
 
 #Getting the functions
 source("./Common/TestingInfrastructure.R")
