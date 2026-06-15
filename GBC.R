@@ -31,6 +31,7 @@ GBC <- function(R,N,chance = 0.5,alpha = 0.05, tail = 'right') {
   if (!is.null(dim(R))) { stop('R should be a vector') }
   if (!is.null(dim(N))) { stop('N should be a vector') }
   if (length(N) != length(R)) { stop('N and R should be the same length') }
+  if (any(N == 0)) { stop('Some participants have 0 trials') }
   # validate values
   validate_input_vec <- function(vec, type) {
     if (!is.numeric(vec)) { stop(paste(type, 'Input vector must be a numeric vector')) }

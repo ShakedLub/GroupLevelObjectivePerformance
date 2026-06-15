@@ -25,6 +25,9 @@ function [h,pval]=GBC(R,N,chance,alpha,tail)
     if all(size(N) ~= size(R))
         error('N and R should be the same size')
     end
+    if any(N == 0)
+        error('Some participants have 0 trials')
+    end
     switch tail
         case 'both'
         case 'right'
