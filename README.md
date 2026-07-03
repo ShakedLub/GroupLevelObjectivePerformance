@@ -1,10 +1,10 @@
 # GroupLevelObjectivePerformance
 
-The preprint can be found at: https://osf.io/preprints/psyarxiv/b967v\_v1
+The preprint can be found at: https://osf.io/preprints/psyarxiv/b967v\_v1 (Accepted for publication on Neuroscience of Consciousness, 7.6.26)
 
 
 
-In this work we suggested two tests to check group level objective awareness: the frequentist Group Binomial or Chi (GBC) test and the Bayesian Group Binomial Bayesian (GB-Bayes) test. Both tests were tailored for maximizing power in detecting consciousness, when using objective measures of awareness. We used simulations to compare the sensitivity and specificity of these tests with other commonly used ones (t-test, Mixed Model Logistic Regression, and Bayesian t-test). Our results show a clear power advantage for the proposed tests, across different scenarios. Furthermore, we reanalyzed 79 previously reported effects, from 15 papers on unconscious processing, and found cases where the proposed test revealed effects that were not detected by the other tests.
+In this work we suggested two tests for group-level objective awareness: the frequentist Group Binomial or Chi (GBC) test and the Bayesian Group Binomial Bayesian (GB-Bayes) test. Both tests were tailored for maximizing power in detecting awareness, according to measures of performance in a forced-choice discrimination task (objective measures of awareness). We used simulations to compare the sensitivity and specificity of these tests with other commonly used ones (t-test, Mixed Model Logistic Regression, and Bayesian t-test). Our results show a clear power advantage for the proposed tests, across different scenarios. Furthermore, we reanalyzed 79 previously reported effects, from 15 papers on unconscious processing, and found cases where the proposed test revealed effects that were not detected by the other tests.
 
 
 
